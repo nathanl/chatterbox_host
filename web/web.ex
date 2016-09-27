@@ -52,6 +52,7 @@ defmodule ChatterboxHost.Web do
       import ChatterboxHost.Router.Helpers
       import ChatterboxHost.ErrorHelpers
       import ChatterboxHost.Gettext
+      import ChatterboxHost.Session, only: [current_user: 1, logged_in?: 1]
     end
   end
 

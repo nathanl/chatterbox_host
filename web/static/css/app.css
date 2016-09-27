@@ -1,1 +1,61 @@
 /* This file is for your main application css. */
+
+#chatbox {
+  padding: 0.5em 0 0 0.5em;
+  border: 1px solid black;
+  background-color: #ddd;
+  position: fixed;
+  bottom: 0px;
+  right: 0px;
+  max-width: 40%;
+}
+
+#chatbox.cs-support {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+}
+
+#chatbox .widget {
+  padding: 1em;
+}
+
+#chatbox .widget #messages {
+  max-height: 10em;
+  overflow: scroll;
+}
+
+#chatbox .chatbox-label {
+  color: green;
+}
+
+#chatbox .chatbox-message {
+  white-space: pre;
+}
+
+#chatbox .chatbox-message:nth-child(odd) {
+  background-color: white;
+}
+
+#chatbox .chatterbox-message-sender {
+  font-weight: bold;
+}
+
+#chatbox .chatterbox-message-timestamp {
+  font-size: 0.75em;
+  font-style: italic;
+}
+
+#chatbox .chatterbox-message-contents {
+  display: block;
+}
+
+#chatbox .chatbox-error {
+  color: red;
+}
+
+#chatbox button.chatbox-end-conversation {
+  background-color: red;
+  color: white;
+  margin-left: 10px;
+}

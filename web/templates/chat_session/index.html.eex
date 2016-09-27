@@ -1,0 +1,7 @@
+<h1>Ongoing Conversations</h1>
+
+<ul>
+  <%= Enum.map(@conversations, fn (conversation) -> %>
+  <li><%= link("Conversation #{conversation.id}", to: "/join_conversation/#{conversation.id}") %></li>
+  <% end) %>
+</ul>

@@ -2,7 +2,7 @@ defmodule ChatterboxHost.UserSocket do
   use Phoenix.Socket
 
   ## Channels
-  # channel "room:*", ChatterboxHost.RoomChannel
+  channel "conversation:*", ChatterboxHost.RoomChannel
 
   ## Transports
   transport :websocket, Phoenix.Transports.WebSocket
