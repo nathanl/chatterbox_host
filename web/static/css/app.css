@@ -7,13 +7,16 @@
   position: fixed;
   bottom: 0px;
   right: 0px;
-  max-width: 40%;
+  width: 40%;
 }
 
 #chatbox.cs-support {
   position: relative;
   width: 100%;
-  max-width: 100%;
+}
+
+#chatbox.closed {
+  opacity: 0.8;
 }
 
 #chatbox .widget {
@@ -27,10 +30,11 @@
 
 #chatbox .chatbox-label {
   color: green;
+  position: relative;
 }
 
 #chatbox .chatbox-message {
-  white-space: pre;
+  white-space: pre-wrap;
 }
 
 #chatbox .chatbox-message:nth-child(odd) {

@@ -25,6 +25,10 @@ defmodule ChatterboxHost.RoomChannel do
       push(socket, "new_msg", %{timestamp: Ecto.DateTime.to_string(message.inserted_at), from: message.sender_name, body: message.content})
     end)
 
+    if Conversation.closed?(conversation) do
+      push(socket, "conversation_closed", %{})
+    end
+
     {:noreply, socket}
   end
 

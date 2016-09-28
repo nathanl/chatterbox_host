@@ -19,8 +19,11 @@ defmodule ChatterboxHost.Conversation do
     changeset(conversation, %{closed_at: Ecto.DateTime.utc})
   end
 
+  def closed?(conversation) do
+    not is_nil(conversation.closed_at)
+  end
+
   def ongoing(query) do
     from c in query, where: is_nil(c.closed_at)
   end
-
 end

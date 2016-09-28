@@ -7,7 +7,12 @@ defmodule ChatterboxHost.ConversationController do
     render conn, conversations: conversations, layout: {ConversationView, "layout.html"}
   end
 
-  def show(conn, %{"id" => id}) do
-    render conn, "show.html", id: id, layout: {ConversationView, "layout.html"}
+  def show(conn, %{"id" => conversation_id}) do
+    conversation = Repo.get_by(Conversation, id: conversation_id)
+    render(conn, "show.html", %{
+      id: conversation_id,
+      layout: {ConversationView, "layout.html"},
+      closed: Conversation.closed?(conversation),
+    })
   end
 end

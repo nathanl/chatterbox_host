@@ -96,6 +96,7 @@ if (document.getElementById("chatbox") !== null) {
     }
 
     this.disable = function() {
+      this.chatBox.className += " closed"
       chat.socket.disconnect()
       this.onSubmit = function(event) { event.preventDefault() }
       this.endConversation = function(){}
@@ -116,7 +117,6 @@ if (document.getElementById("chatbox") !== null) {
         chat.displayError(chatSessionInfo.error)
         return false
       }
-      console.log("we got", chatSessionInfo)
 
       chat.channel_name          = chatSessionInfo.channel_name
       chat.user_name             = chatSessionInfo.user_name
