@@ -2,6 +2,6 @@
 
 <ul>
   <%= Enum.map(@conversations, fn (conversation) -> %>
-  <li><%= link("Conversation #{conversation.id}", to: "/join_conversation/#{conversation.id}") %></li>
+  <li><%= link("Conversation #{conversation.id}", to: "/conversations/#{conversation.id}") %></li>
   <% end) %>
 </ul>

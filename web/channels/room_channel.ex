@@ -28,21 +28,32 @@ defmodule ChatterboxHost.RoomChannel do
     {:noreply, socket}
   end
 
+  # TODO do not accept new messages after the conversation is closed
   def handle_in("new_msg", %{"body" => body, "user_name" => user_name, "user_id_token" => user_id_token}, socket) do
-    message = record_message(socket, body, user_id_token, user_name)
+    message = record_message(socket.assigns[:conversation_id], body, user_id_token, user_name)
 
     broadcast!(socket, "new_msg", %{timestamp: Ecto.DateTime.to_string(message.inserted_at), from: user_name, body: body,  })
     {:noreply, socket}
   end
 
-  defp record_message(socket, content, user_id_token, user_name) do
+  def handle_in("conversation_closed", %{"closed_by" => closed_by, "user_id_token" => user_id_token, "closed_at" => closed_at}, socket) do
+    body = "[Conversation closed by #{closed_by} at #{closed_at}]"
+    sender_name = "System"
+    message = record_message(socket.assigns[:conversation_id], body, user_id_token, sender_name)
+
+    broadcast!(socket, "new_msg", %{timestamp: Ecto.DateTime.to_string(message.inserted_at), from: sender_name, body: body})
+    broadcast!(socket, "conversation_closed", %{})
+    {:noreply, socket}
+  end
+
+  defp record_message(conversation_id, content, user_id_token, sender_name) do
     user_id = case Phoenix.Token.verify(ChatterboxHost.Endpoint, "user_id", user_id_token) do
       {:ok, verified_id} -> verified_id
       _ -> nil
     end
 
     new_message =
-      %Message{content: content, conversation_id: socket.assigns[:conversation_id], sender_name: user_name, sender_id: user_id}
+      %Message{content: content, conversation_id: conversation_id, sender_name: sender_name, sender_id: user_id}
       |> Message.changeset
       {:ok, message} = Repo.insert(new_message)
       message

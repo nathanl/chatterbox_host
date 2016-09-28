@@ -9,28 +9,36 @@ if (document.getElementById("chatbox") !== null) {
     this.user_id_token         = null
     this.conversation_id_token = null
 
-    this.chatBox = document.getElementById("chatbox")
-    let chatInput    = document.getElementById("chatbox-input")
-    let chatMessages = document.getElementById("chatbox-messages")
+    this.chatBox               = document.getElementById("chatbox")
+    this.chatInput             = document.getElementById("chatbox-input")
+    let chatMessages           = document.getElementById("chatbox-messages")
+    this.endConversationButton = document.getElementById("chatbox-end-conversation")
+
+    this.isCustomerServiceChat =  !!this.chatBox.dataset.conversationId
 
     this.endConversation = function() {
+      // TODO this should not be a GET but a PUT
       this.ajaxGetRequest(
         `/api/close_conversation/${this.conversation_id_token}`, (chatSessionInfo) => {
-          this.addMessage(chatSessionInfo.closed_at, "[System]", "Conversation Closed")
-        })
-        this.socket.disconnect()
-        this.endConversation = function(){}
+          this.channel.push("conversation_closed", {
+            closed_at: chatSessionInfo.closed_at,
+            closed_by: this.user_name,
+            user_id_token: this.user_id_token,
+          })
+          this.chatSessionCleared = true
+        }
+      )
     }
 
     this.onSubmit = function(submitHandler) {
       let enterKeyCode = 13
-      chatInput.addEventListener("keypress", event => {
+      this.chatInput.addEventListener("keypress", event => {
         if(event.keyCode === enterKeyCode && !event.shiftKey) {
-          let message = chatInput.value.trim()
+          let message = this.chatInput.value.trim()
           if (!this.isBlank(message)) {
 
             submitHandler(message, this.user_name, this.user_id_token)
-            chatInput.value = ""
+            this.chatInput.value = ""
           }
           event.preventDefault() // don't insert a new line
         }
@@ -68,12 +76,11 @@ if (document.getElementById("chatbox") !== null) {
       }
       httpRequest.open('GET', url);
       httpRequest.send();
-      console.log("sent request")
     }
 
     this.requestChatSession = function(handleSessionInfo) {
       let url = null 
-      if (this.chatBox.dataset.conversationId) {
+      if (this.isCustomerServiceChat) {
         url = `/api/give_help/${this.chatBox.dataset.conversationId}`
       } else {
         url = "/api/get_help"
@@ -86,6 +93,18 @@ if (document.getElementById("chatbox") !== null) {
       errorDiv.setAttribute("class", "chatbox-error")
       errorDiv.innerHTML = message
       this.chatBox.appendChild(errorDiv)
+    }
+
+    this.disable = function() {
+      chat.socket.disconnect()
+      this.onSubmit = function(event) { event.preventDefault() }
+      this.endConversation = function(){}
+      this.chatInput.parentNode.removeChild(this.chatInput)
+      if (!this.isCustomerServiceChat && !this.chatSessionCleared) {
+        this.ajaxGetRequest("/api/clear_chat_session", (_response) => {
+          this.chatSessionCleared = true
+        })
+      }
     }
   }
 
@@ -104,24 +123,29 @@ if (document.getElementById("chatbox") !== null) {
       chat.user_id_token         = chatSessionInfo.user_id_token
       chat.conversation_id_token = chatSessionInfo.conversation_id_token
 
+      chat.endConversationButton.addEventListener("click", event => {
+        chat.endConversation()
+      })
+
       chat.socket = new Socket("/socket", {})
       chat.socket.connect()
-      let channel = chat.socket.channel(chatSessionInfo.channel_name, {conversation_id_token: chatSessionInfo.conversation_id_token})
-      channel.on("new_msg", payload => chat.addMessage(payload.timestamp, payload.from, payload.body))
+      chat.channel = chat.socket.channel(chatSessionInfo.channel_name, {conversation_id_token: chatSessionInfo.conversation_id_token})
+      chat.channel.on("new_msg", payload => chat.addMessage(payload.timestamp, payload.from, payload.body))
+      chat.channel.on("conversation_closed", _response => { chat.disable() })
 
-      channel.join()
+      chat.channel.join()
       .receive("ok", resp => console.log("Joined successfully", resp))
       .receive("error", resp => console.log("Unable to join", resp))
 
       chat.onSubmit( (body, user_name, user_id_token) => {
-        channel.push("new_msg", {
+        chat.channel.push("new_msg", {
           body: body,
           user_name: user_name,
           user_id_token: user_id_token,
         })
         .receive("ok", response => {
           response.messages.forEach(body => chat.addMessage(response.from, body))
-        })
+        })      
       })
     }
   )

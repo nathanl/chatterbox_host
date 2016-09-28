@@ -22,8 +22,8 @@ defmodule ChatterboxHost.Router do
     get    "/login",  SessionController, :new
     post   "/login",  SessionController, :create
     delete "/logout", SessionController, :delete
-    get    "/join_conversation/:id", ConversationController, :join_conversation
-    get  "/conversations", ChatSessionController, :index
+    get "/conversations/:id", ConversationController, :show
+    get "/conversations",    ConversationController, :index
   end
 
   # Other scopes may use custom stacks.
@@ -32,5 +32,6 @@ defmodule ChatterboxHost.Router do
     get  "/get_help",                        ChatSessionController, :get_help
     get  "/give_help/:conversation_id",      ChatSessionController, :give_help
     get  "/close_conversation/:conversation_id_token", ChatSessionController, :close_conversation
+    get  "/clear_chat_session", ChatSessionController, :clear
   end
 end

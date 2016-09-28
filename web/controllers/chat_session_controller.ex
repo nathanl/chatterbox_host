@@ -1,17 +1,10 @@
 defmodule ChatterboxHost.ChatSessionController do
   use ChatterboxHost.Web, :controller
-  alias ChatterboxHost.Repo
-  alias ChatterboxHost.User
-  alias ChatterboxHost.Conversation
-
-  def index(conn, _assigns) do
-    conversations = Repo.all(Conversation |> Conversation.ongoing)
-    render conn, %{conversations: conversations}
-  end
+  alias ChatterboxHost.{Endpoint,Repo,User,Conversation}
 
   def give_help(conn, %{"conversation_id" => conversation_id}) do
     conn = conn |> fetch_session
-    conversation = Repo.get_by(ChatterboxHost.Conversation, id: conversation_id)
+    conversation = Repo.get_by(Conversation, id: conversation_id)
     render_data = case conversation do
       nil -> %{error: "The requested conversation does not exist"}
       %Conversation{} ->
@@ -19,7 +12,7 @@ defmodule ChatterboxHost.ChatSessionController do
         case user_may_join_conversation?(user, conversation) do
           :ok -> 
             user_id_token = user_id_token(user)
-            conversation_id_token = Phoenix.Token.sign(ChatterboxHost.Endpoint, "conversation_id", conversation_id)
+            conversation_id_token = Phoenix.Token.sign(Endpoint, "conversation_id", conversation_id)
             %{
               user_id_token: user_id_token,
               user_name: user.name,
@@ -43,7 +36,7 @@ defmodule ChatterboxHost.ChatSessionController do
     conversation_id = new_or_existing_conversation_id(conn)
 
     conn = conn |> put_session(:getting_help_in_conversation_id, conversation_id)
-    conversation_id_token = Phoenix.Token.sign(ChatterboxHost.Endpoint, "conversation_id", conversation_id)
+    conversation_id_token = Phoenix.Token.sign(Endpoint, "conversation_id", conversation_id)
 
     render conn, user_id_token: user_id_token, user_name: user.name, channel_name: "conversation:#{conversation_id}", conversation_id_token: conversation_id_token
   end
@@ -52,7 +45,7 @@ defmodule ChatterboxHost.ChatSessionController do
     conn = conn |> fetch_session
 
     closed_conversation = with {:ok, conversation_id} <- Phoenix.Token.verify(
-      ChatterboxHost.Endpoint, "conversation_id", conversation_id_token
+      Endpoint, "conversation_id", conversation_id_token
     ), conversation <- Repo.get_by(Conversation, id: conversation_id),
     %Conversation{} <- conversation do
       {:ok, conversation} = Conversation.close(conversation) |> Repo.update
@@ -64,6 +57,12 @@ defmodule ChatterboxHost.ChatSessionController do
     render conn, closed_at: Ecto.DateTime.to_string(closed_conversation.closed_at)
   end
 
+  def clear(conn, _assigns) do
+    conn = conn |> fetch_session |> put_session(:getting_help_in_conversation_id, nil)
+
+    render conn, %{}
+  end
+
   defp new_or_existing_conversation_id(conn) do
     with convo_id when not is_nil(convo_id) <- get_session(conn, :getting_help_in_conversation_id),
     %Conversation{} <- Repo.get_by(Conversation, id: convo_id) do
@@ -72,7 +71,7 @@ defmodule ChatterboxHost.ChatSessionController do
       _ ->
         new_conversation = Conversation.changeset(%Conversation{})
         IO.inspect ["new conversation is", new_conversation]
-        {:ok, new_conversation} = ChatterboxHost.Repo.insert(new_conversation)
+        {:ok, new_conversation} = Repo.insert(new_conversation)
         new_conversation.id
     end 
   end
@@ -80,7 +79,7 @@ defmodule ChatterboxHost.ChatSessionController do
   defp user_id_token(user) do
     case user.id do
       nil -> nil
-      _id  -> Phoenix.Token.sign(ChatterboxHost.Endpoint, "user_id", user.id)
+      _id  -> Phoenix.Token.sign(Endpoint, "user_id", user.id)
     end
   end
 

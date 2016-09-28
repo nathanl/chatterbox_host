@@ -13,4 +13,8 @@ defmodule ChatterboxHost.ChatSessionView do
     %{channel_name: conversation, user_name: user_name, user_id_token: user_id_token, conversation_id_token: conversation_id_token}
   end
 
+  def render("clear.json", %{}) do
+    %{ok: :ok}
+  end
+
 end
