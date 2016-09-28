@@ -1,0 +1,11 @@
+@<div id="chatbox" class="<%= assigns[:chatbox_class] %>" data-conversation-id="<%= assigns[:conversation_id] %>">
+  <div class="chatbox-label">
+    Live Chat, woo!
+    <button class="chatbox-end-conversation">✗</button>
+  </div>
+  <div id="chatbox-messages" tabindex="0">
+  </div>
+  <form>
+    <textarea id="chatbox-input" placeholder="type here"></textarea>
+  </form>
+</div>

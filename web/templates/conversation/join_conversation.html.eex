@@ -1,4 +1,4 @@
 <h1>CS Chat</h1>
 
-<div id="chatbox" class="cs-support" data-conversation-id="<%= @id %>">
+<%= render ChatterboxHost.LayoutView, "_chatbox.html", chatbox_class: "cs-support", conversation_id: @id %>
 </div>
