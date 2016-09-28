@@ -3,7 +3,7 @@ defmodule ChatterboxHost.ConversationController do
   alias ChatterboxHost.{Conversation,ConversationView}
 
   def index(conn, _assigns) do
-    conversations = Repo.all(Conversation |> Conversation.ongoing)
+    conversations = Repo.all(Conversation |> Conversation.ongoing |> Conversation.by_timestamp)
     render conn, conversations: conversations, layout: {ConversationView, "layout.html"}
   end
 

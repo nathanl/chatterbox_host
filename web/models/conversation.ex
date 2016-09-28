@@ -1,5 +1,6 @@
 defmodule ChatterboxHost.Conversation do
   use ChatterboxHost.Web, :model
+  alias ChatterboxHost.Conversation
 
   schema "chatterbox_conversations" do
     has_many :messages, ChatterboxHost.Message
@@ -25,5 +26,9 @@ defmodule ChatterboxHost.Conversation do
 
   def ongoing(query) do
     from c in query, where: is_nil(c.closed_at)
+  end
+
+  def by_timestamp(query) do
+    from c in query, order_by: c.inserted_at
   end
 end

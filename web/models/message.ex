@@ -1,5 +1,6 @@
 defmodule ChatterboxHost.Message do
   use ChatterboxHost.Web, :model
+  alias ChatterboxHost.Message
 
   schema "chatterbox_messages" do
 
@@ -21,6 +22,10 @@ defmodule ChatterboxHost.Message do
     # |> cast(params, @allowed_fields)
     # |> validate_required(@required_fields)
     # |> validate_length(:content, max: @max_content_size)
+  end
+
+  def by_timestamp(query) do
+    from m in query, order_by: m.inserted_at
   end
 
 end

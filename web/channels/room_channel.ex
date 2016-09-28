@@ -19,8 +19,7 @@ defmodule ChatterboxHost.RoomChannel do
   end
 
   def handle_info({:after_join, conversation_id}, socket) do
-    messages_query = Ecto.Query.from m in Message, order_by: m.inserted_at
-    conversation = Repo.one(Ecto.Query.from c in Conversation, where: c.id == ^conversation_id, preload: [messages: ^messages_query])
+    conversation = Repo.one(Ecto.Query.from c in Conversation, where: c.id == ^conversation_id, preload: [messages: ^Message.by_timestamp(Message)])
     conversation.messages |> Enum.each(fn (message) ->
       push(socket, "new_msg", %{timestamp: Ecto.DateTime.to_string(message.inserted_at), from: message.sender_name, body: message.content})
     end)
