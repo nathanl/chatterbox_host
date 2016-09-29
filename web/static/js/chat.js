@@ -16,6 +16,47 @@ if (document.getElementById("chatbox") !== null) {
 
     this.isCustomerServiceChat =  !!this.chatBox.dataset.conversationId
 
+    this.startChat = function(){
+      chat.requestChatSession(
+        function(chatSessionInfo){
+          if (chatSessionInfo.error) {
+            chat.displayError(chatSessionInfo.error)
+            return false
+          }
+
+          chat.channel_name          = chatSessionInfo.channel_name
+          chat.user_name             = chatSessionInfo.user_name
+          chat.user_id_token         = chatSessionInfo.user_id_token
+          chat.conversation_id_token = chatSessionInfo.conversation_id_token
+
+          chat.endConversationButton.addEventListener("click", event => {
+            chat.endConversation()
+          })
+
+          chat.socket = new Socket("/socket", {})
+          chat.socket.connect()
+          chat.channel = chat.socket.channel(chatSessionInfo.channel_name, {conversation_id_token: chatSessionInfo.conversation_id_token})
+          chat.channel.on("new_msg", payload => chat.addMessage(payload.timestamp, payload.from, payload.body))
+          chat.channel.on("conversation_closed", _response => { chat.disable() })
+
+          chat.channel.join()
+          .receive("ok", resp => console.log("Joined successfully", resp))
+          .receive("error", resp => console.log("Unable to join", resp))
+
+          chat.onSubmit( (body, user_name, user_id_token) => {
+            chat.channel.push("new_msg", {
+              body: body,
+              user_name: user_name,
+              user_id_token: user_id_token,
+            })
+            .receive("ok", response => {
+              response.messages.forEach(body => chat.addMessage(response.from, body))
+            })
+          })
+        }
+      )
+    }
+
     this.requestChatSession = function(handleSessionInfo) {
       let url = null
       if (this.isCustomerServiceChat) {
@@ -110,43 +151,5 @@ if (document.getElementById("chatbox") !== null) {
   }
 
   let chat = new Chat()
-
-  chat.requestChatSession(
-    function(chatSessionInfo){
-      if (chatSessionInfo.error) {
-        chat.displayError(chatSessionInfo.error)
-        return false
-      }
-
-      chat.channel_name          = chatSessionInfo.channel_name
-      chat.user_name             = chatSessionInfo.user_name
-      chat.user_id_token         = chatSessionInfo.user_id_token
-      chat.conversation_id_token = chatSessionInfo.conversation_id_token
-
-      chat.endConversationButton.addEventListener("click", event => {
-        chat.endConversation()
-      })
-
-      chat.socket = new Socket("/socket", {})
-      chat.socket.connect()
-      chat.channel = chat.socket.channel(chatSessionInfo.channel_name, {conversation_id_token: chatSessionInfo.conversation_id_token})
-      chat.channel.on("new_msg", payload => chat.addMessage(payload.timestamp, payload.from, payload.body))
-      chat.channel.on("conversation_closed", _response => { chat.disable() })
-
-      chat.channel.join()
-      .receive("ok", resp => console.log("Joined successfully", resp))
-      .receive("error", resp => console.log("Unable to join", resp))
-
-      chat.onSubmit( (body, user_name, user_id_token) => {
-        chat.channel.push("new_msg", {
-          body: body,
-          user_name: user_name,
-          user_id_token: user_id_token,
-        })
-        .receive("ok", response => {
-          response.messages.forEach(body => chat.addMessage(response.from, body))
-        })
-      })
-    }
-  )
+  chat.startChat()
 }
