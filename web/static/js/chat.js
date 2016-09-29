@@ -17,8 +17,8 @@ if (document.getElementById("chatbox") !== null) {
     this.isCustomerServiceChat =  !!this.chatBox.dataset.conversationId
 
     this.endConversation = function() {
-      // TODO this should not be a GET but a PUT
-      this.ajaxGetRequest(
+      this.onAjaxSuccess(
+        "PUT",
         `/api/close_conversation/${this.conversation_id_token}`, (chatSessionInfo) => {
           this.channel.push("conversation_closed", {
             closed_at: chatSessionInfo.closed_at,
@@ -56,7 +56,7 @@ if (document.getElementById("chatbox") !== null) {
       chatMessages.appendChild(newMessage)
     }
 
-    this.ajaxGetRequest = function(url, onSuccessCallback) {
+    this.onAjaxSuccess = function(verb, url, callback) {
       let httpRequest = new XMLHttpRequest();
 
       if (!httpRequest) {
@@ -66,7 +66,7 @@ if (document.getElementById("chatbox") !== null) {
       httpRequest.onreadystatechange = function() {
         if (httpRequest.readyState === XMLHttpRequest.DONE) {
           if (httpRequest.status === 200) {
-            onSuccessCallback(
+            callback(
               JSON.parse(httpRequest.responseText)
             )
           } else {
@@ -74,7 +74,7 @@ if (document.getElementById("chatbox") !== null) {
           }
         }
       }
-      httpRequest.open('GET', url);
+      httpRequest.open(verb, url);
       httpRequest.send();
     }
 
@@ -85,7 +85,7 @@ if (document.getElementById("chatbox") !== null) {
       } else {
         url = "/api/get_help"
       }
-      this.ajaxGetRequest(url, handleSessionInfo)
+      this.onAjaxSuccess("GET", url, handleSessionInfo)
     }
 
     this.displayError = function(message) {
@@ -102,7 +102,7 @@ if (document.getElementById("chatbox") !== null) {
       this.endConversation = function(){}
       this.chatInput.parentNode.removeChild(this.chatInput)
       if (!this.isCustomerServiceChat && !this.chatSessionCleared) {
-        this.ajaxGetRequest("/api/clear_chat_session", (_response) => {
+        this.onAjaxSuccess("PUT", "/api/clear_chat_session", (_response) => {
           this.chatSessionCleared = true
         })
       }
