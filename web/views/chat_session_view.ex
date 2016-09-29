@@ -5,8 +5,8 @@ defmodule ChatterboxHost.ChatSessionView do
     %{error: error}
   end
 
-  def render(_something_dot_json, %{closed_at: closed_at}) do
-    %{closed_at: closed_at}
+  def render(_something_dot_json, %{ended_at: ended_at}) do
+    %{ended_at: ended_at}
   end
 
   def render(_something_dot_json, %{channel_name: conversation, user_name: user_name, user_id_token: user_id_token, conversation_id_token: conversation_id_token}) do

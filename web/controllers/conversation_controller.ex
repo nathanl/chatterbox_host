@@ -12,7 +12,7 @@ defmodule ChatterboxHost.ConversationController do
     render(conn, "show.html", %{
       id: conversation_id,
       layout: {ConversationView, "layout.html"},
-      closed: Conversation.closed?(conversation),
+      ended: Conversation.ended?(conversation),
     })
   end
 end

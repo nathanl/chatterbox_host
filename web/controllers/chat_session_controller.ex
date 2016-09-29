@@ -48,13 +48,13 @@ defmodule ChatterboxHost.ChatSessionController do
       Endpoint, "conversation_id", conversation_id_token
     ), conversation <- Repo.get_by(Conversation, id: conversation_id),
     %Conversation{} <- conversation do
-      {:ok, conversation} = Conversation.close(conversation) |> Repo.update
+      {:ok, conversation} = Conversation.end_now(conversation) |> Repo.update
       conversation
     end
 
     conn = conn |> clear_conversation_from_session(closed_conversation)
 
-    render conn, closed_at: Ecto.DateTime.to_string(closed_conversation.closed_at)
+    render conn, ended_at: Ecto.DateTime.to_string(closed_conversation.ended_at)
   end
 
   def clear(conn, _assigns) do
@@ -90,7 +90,6 @@ defmodule ChatterboxHost.ChatSessionController do
     else
       _ -> conn
     end
-
   end
 
   # TODO move this to a module; app is responsible for it

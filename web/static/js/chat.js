@@ -127,8 +127,8 @@ if (document.getElementById("chatbox") !== null) {
         "PUT",
         `/api/close_conversation/${this.conversation_id_token}`, (chatSessionInfo) => {
           this.channel.push("conversation_closed", {
-            closed_at: chatSessionInfo.closed_at,
-            closed_by: this.user_name,
+            ended_at: chatSessionInfo.ended_at,
+            ended_by: this.user_name,
             user_id_token: this.user_id_token,
           })
           this.chatSessionCleared = true
@@ -137,7 +137,7 @@ if (document.getElementById("chatbox") !== null) {
     }
 
     this.disable = function() {
-      this.chatBox.className += " closed"
+      this.chatBox.className += " ended"
       chat.socket.disconnect()
       this.onSubmit = function(event) { event.preventDefault() }
       this.endConversation = function(){}

@@ -3,7 +3,7 @@ defmodule ChatterboxHost.Repo.Migrations.AddConversations do
 
   def change do
     create table(:chatterbox_conversations) do
-      add :closed_at, :datetime
+      add :ended_at, :datetime
       timestamps
     end
 

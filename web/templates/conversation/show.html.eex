@@ -1,3 +1,3 @@
 <h1>CS Chat</h1>
 
-<%= render ChatterboxHost.LayoutView, "_chatbox.html", chatbox_class: "cs-support#{if @closed, do: " closed"}", conversation_id: @id, closed: @closed %>
+<%= render ChatterboxHost.LayoutView, "_chatbox.html", chatbox_class: "cs-support#{if @ended, do: " ended"}", conversation_id: @id, ended: @ended %>

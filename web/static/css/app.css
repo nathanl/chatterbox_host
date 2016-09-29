@@ -15,7 +15,7 @@
   width: 100%;
 }
 
-#chatbox.closed {
+#chatbox.ended {
   opacity: 0.8;
 }
 
