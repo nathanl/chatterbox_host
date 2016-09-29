@@ -1,11 +1,19 @@
-<div id="chatbox" class="<%= assigns[:chatbox_class] %>" data-conversation-id="<%= assigns[:conversation_id] %>">
-  <div class="chatbox-label">
-    Live Chat, woo!
-    <button id="chatbox-end-conversation">End Chat</button>
+<div id="chatbox" class="inactive <%= assigns[:chatbox_class]%>" data-conversation-id="<%= assigns[:conversation_id] %>">
+  <div class="active state">
+    <div class="chatbox-label">
+      Live Chat, woo!
+      <button id="chatbox-end-conversation">End Chat</button>
+    </div>
+    <div id="chatbox-messages" tabindex="0">
+    </div>
+    <form>
+      <textarea id="chatbox-input" placeholder="type here"></textarea>
+    </form>
   </div>
-  <div id="chatbox-messages" tabindex="0">
+  <div class="inactive state">
+    <button id="chatbox-startchat"></button>
   </div>
-  <form>
-    <textarea id="chatbox-input" placeholder="type here"></textarea>
-  </form>
+  <div class="loading state">
+    Loading...
+  </div>
 </div>

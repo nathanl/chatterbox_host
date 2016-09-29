@@ -3,7 +3,6 @@ defmodule ChatterboxHost.ChatSessionController do
   alias ChatterboxHost.{Endpoint,Repo,User,Conversation}
 
   def give_help(conn, %{"conversation_id" => conversation_id}) do
-    conn = conn |> fetch_session
     conversation = Repo.get_by(Conversation, id: conversation_id)
     render_data = case conversation do
       nil -> %{error: "The requested conversation does not exist"}
@@ -28,7 +27,6 @@ defmodule ChatterboxHost.ChatSessionController do
   end
 
   def get_help(conn, _params) do
-    conn = conn |> fetch_session
     user = user_for_session(conn)
     
     user_id_token = user_id_token(user)
@@ -42,8 +40,6 @@ defmodule ChatterboxHost.ChatSessionController do
   end
 
   def close_conversation(conn, %{"conversation_id_token" => conversation_id_token}) do
-    conn = conn |> fetch_session
-
     closed_conversation = with {:ok, conversation_id} <- Phoenix.Token.verify(
       Endpoint, "conversation_id", conversation_id_token
     ), conversation <- Repo.get_by(Conversation, id: conversation_id),
@@ -58,7 +54,7 @@ defmodule ChatterboxHost.ChatSessionController do
   end
 
   def clear(conn, _assigns) do
-    conn = conn |> fetch_session |> put_session(:getting_help_in_conversation_id, nil)
+    conn = conn |> put_session(:getting_help_in_conversation_id, nil)
 
     render conn, %{}
   end

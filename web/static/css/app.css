@@ -1,7 +1,7 @@
 /* This file is for your main application css. */
 
 #chatbox {
-  padding: 0.5em 0 0 0.5em;
+  padding: 0.5em;
   border: 1px solid black;
   background-color: #ddd;
   position: fixed;
@@ -10,13 +10,13 @@
   width: 40%;
 }
 
+#chatbox textarea {
+  width: 80%;
+}
+
 #chatbox.cs-support {
   position: relative;
   width: 100%;
-}
-
-#chatbox.ended {
-  opacity: 0.8;
 }
 
 #chatbox .widget {
@@ -63,3 +63,17 @@
   color: white;
   margin-left: 10px;
 }
+
+#chatbox .state                   { display: none; }
+#chatbox.inactive .inactive.state { display: block; }
+#chatbox.loading  .loading.state  { display: block; }
+#chatbox.active   .active.state   { display: block; }
+#chatbox.ended    .active.state   { display: block; opacity: 0.8; }
+
+#chatbox.inactive { background: none; border: none; }
+#chatbox.inactive button#chatbox-startchat { background: #eef; border: none; }
+#chatbox.inactive button#chatbox-startchat { font-size: 3em; }
+#chatbox.inactive button#chatbox-startchat:before { content: "💬" }
+
+#chatbox .loading.state { padding: 1.5em; font-size: 1.5em;}
+

@@ -8,7 +8,9 @@ if (document.getElementById("chatbox") !== null) {
     this.user_name             = null
     this.user_id_token         = null
     this.conversation_id_token = null
+    this.chatStarted           = false
 
+    this.startChatButton       = document.getElementById("chatbox-startchat")
     this.chatBox               = document.getElementById("chatbox")
     this.chatInput             = document.getElementById("chatbox-input")
     let chatMessages           = document.getElementById("chatbox-messages")
@@ -16,13 +18,31 @@ if (document.getElementById("chatbox") !== null) {
 
     this.isCustomerServiceChat =  !!this.chatBox.dataset.conversationId
 
+    this.checkAndMaybeStart = function(){
+      let userIsCsRep   = !!this.chatBox.className.match("cs-support")
+      let inChatSession = !!document.cookie.match("in_chat_session=true")
+
+      if (inChatSession || userIsCsRep) {
+        this.startChat()
+      }
+    }
+
+    this.startChatButton.addEventListener("click", event => {
+      event.preventDefault()
+      this.startChat()
+    })
+
     this.startChat = function(){
+      if (this.chatStarted) { return false }
+      chat.chatStarted = true
+      chat.swapClass(this.chatBox, "inactive", "loading")
       chat.requestChatSession(
         function(chatSessionInfo){
           if (chatSessionInfo.error) {
             chat.displayError(chatSessionInfo.error)
             return false
           }
+          chat.swapClass(chat.chatBox, "loading", "active")
 
           chat.channel_name          = chatSessionInfo.channel_name
           chat.user_name             = chatSessionInfo.user_name
@@ -82,10 +102,6 @@ if (document.getElementById("chatbox") !== null) {
       })
     }
 
-    this.isBlank = function(string) {
-      return (!string || /^\s*$/.test(string))
-    }
-
     this.addMessage = function(timestamp, from, message) {
       let newMessage = document.createElement("div")
       newMessage.innerHTML = `<span class="chatterbox-message-sender">${from}</span> <span class="chatterbox-message-timestamp">${timestamp}</span> <span class="chatterbox-message-contents">${message}</span>`
@@ -137,7 +153,8 @@ if (document.getElementById("chatbox") !== null) {
     }
 
     this.disable = function() {
-      this.chatBox.className += " ended"
+      console.log("ending")
+      chat.swapClass(this.chatBox, "active", "ended")
       chat.socket.disconnect()
       this.onSubmit = function(event) { event.preventDefault() }
       this.endConversation = function(){}
@@ -148,8 +165,17 @@ if (document.getElementById("chatbox") !== null) {
         })
       }
     }
+
+    this.isBlank = function(string) {
+      return (!string || /^\s*$/.test(string))
+    }
+
+    this.swapClass = function(element, remove, add) {
+      element.className = element.className.replace(remove, add)
+    }
+
   }
 
   let chat = new Chat()
-  chat.startChat()
+  chat.checkAndMaybeStart()
 }

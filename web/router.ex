@@ -2,15 +2,16 @@ defmodule ChatterboxHost.Router do
   use ChatterboxHost.Web, :router
 
   pipeline :browser do
+    plug ChatterboxPlug
     plug :accepts, ["html"]
     plug :fetch_session
     plug :fetch_flash
     plug :protect_from_forgery
     plug :put_secure_browser_headers
-    plug ChatterboxHost.SetUsername
   end
 
   pipeline :api do
+    plug ChatterboxPlug
     plug :accepts, ["json"]
   end
 
