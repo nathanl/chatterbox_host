@@ -1,3 +1,5 @@
+
 <h1>CS Chat</h1>
+<%= link "All Conversations", to: "/conversations" %>
 
 <%= render ChatterboxHost.LayoutView, "_chatbox.html", chatbox_class: "cs-support#{if @ended, do: " ended"}", conversation_id: @id, ended: @ended %>
