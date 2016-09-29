@@ -16,18 +16,14 @@ if (document.getElementById("chatbox") !== null) {
 
     this.isCustomerServiceChat =  !!this.chatBox.dataset.conversationId
 
-    this.endConversation = function() {
-      this.onAjaxSuccess(
-        "PUT",
-        `/api/close_conversation/${this.conversation_id_token}`, (chatSessionInfo) => {
-          this.channel.push("conversation_closed", {
-            closed_at: chatSessionInfo.closed_at,
-            closed_by: this.user_name,
-            user_id_token: this.user_id_token,
-          })
-          this.chatSessionCleared = true
-        }
-      )
+    this.requestChatSession = function(handleSessionInfo) {
+      let url = null
+      if (this.isCustomerServiceChat) {
+        url = `/api/give_help/${this.chatBox.dataset.conversationId}`
+      } else {
+        url = "/api/get_help"
+      }
+      this.onAjaxSuccess("GET", url, handleSessionInfo)
     }
 
     this.onSubmit = function(submitHandler) {
@@ -78,21 +74,25 @@ if (document.getElementById("chatbox") !== null) {
       httpRequest.send();
     }
 
-    this.requestChatSession = function(handleSessionInfo) {
-      let url = null 
-      if (this.isCustomerServiceChat) {
-        url = `/api/give_help/${this.chatBox.dataset.conversationId}`
-      } else {
-        url = "/api/get_help"
-      }
-      this.onAjaxSuccess("GET", url, handleSessionInfo)
-    }
-
     this.displayError = function(message) {
       let errorDiv = document.createElement("div")
       errorDiv.setAttribute("class", "chatbox-error")
       errorDiv.innerHTML = message
       this.chatBox.appendChild(errorDiv)
+    }
+
+    this.endConversation = function() {
+      this.onAjaxSuccess(
+        "PUT",
+        `/api/close_conversation/${this.conversation_id_token}`, (chatSessionInfo) => {
+          this.channel.push("conversation_closed", {
+            closed_at: chatSessionInfo.closed_at,
+            closed_by: this.user_name,
+            user_id_token: this.user_id_token,
+          })
+          this.chatSessionCleared = true
+        }
+      )
     }
 
     this.disable = function() {
@@ -112,7 +112,7 @@ if (document.getElementById("chatbox") !== null) {
   let chat = new Chat()
 
   chat.requestChatSession(
-    function(chatSessionInfo){ 
+    function(chatSessionInfo){
       if (chatSessionInfo.error) {
         chat.displayError(chatSessionInfo.error)
         return false
@@ -145,7 +145,7 @@ if (document.getElementById("chatbox") !== null) {
         })
         .receive("ok", response => {
           response.messages.forEach(body => chat.addMessage(response.from, body))
-        })      
+        })
       })
     }
   )
