@@ -1,7 +1,21 @@
-<h1>Ongoing Conversations</h1>
+<h1>Conversations</h1>
 
-<ul>
-  <%= Enum.map(@conversations, fn (conversation) -> %>
-  <li><%= link("Conversation #{conversation.id}", to: "/conversations/#{conversation.id}") %></li>
+<div id="chatterbox-dashboard">
+  <%= Enum.map(@conversations, fn ({category, conversations}) -> %>
+    <div class="conversation-category">
+      <h2><%= category %></h2>
+      <%= Enum.map(conversations, fn (conversation) -> %>
+        <div class="conversation">
+          <%= link("💬💬", to: "/conversations/#{conversation.id}") %>
+          <span class="user-name"><%= raw(conversation.first_message.sender_name) %></span>
+          <span class="opening-message"><%= raw(conversation.first_message.content || "(No message yet)") %></span>
+        </div>
+      <% end) %>
+    </div>
   <% end) %>
-</ul>
+</div>
+
+<script>
+  // You want live updates, you say!?! READ AND WEEP! 😜
+  setTimeout(function() { location.reload(true) }, 4000);
+</script>

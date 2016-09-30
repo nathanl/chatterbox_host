@@ -1,9 +1,9 @@
-- Stop setting up chat box on every page. Instead, pages that want it should include a partial; if the JS sees the appropriate div, it will set it up.
-- The CS chat panel will not include that partial
+- Add tagging UI to conversations/show view, and display tags in the index view
 - In setup:
-  - Prompt user for name if not logged in (initially just use "Anonymous")
+  - Prompt user for name if not logged in (currently using "Anonymous")
   - Set up chat window, using given chat room name and username
 - Given that we're setting a cookie on every request, if a user loads a page and we already know that they're in a chat session, they should have all the info they need to connect to the socket without having to do another setup request.
+- Note that application needs to put some kind of auth in front of CS rep conversation views
 
 ## Ideas for Later
 - Support file uploads?

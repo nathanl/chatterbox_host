@@ -28,4 +28,8 @@ defmodule ChatterboxHost.Message do
     from m in query, order_by: m.inserted_at
   end
 
+  def first_by_timestamp(query) do
+    query |>  by_timestamp |> limit(1)
+  end
+
 end
