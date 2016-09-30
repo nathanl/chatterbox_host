@@ -53,7 +53,7 @@ if (document.getElementById("chatbox") !== null) {
             chat.endConversation()
           })
 
-          chat.socket = new Socket("/socket", {})
+          chat.socket = new Socket("/chatterbox_socket", {})
           chat.socket.connect()
           chat.channel = chat.socket.channel(chatSessionInfo.channel_name, {conversation_id_token: chatSessionInfo.conversation_id_token})
           chat.channel.on("new_msg", payload => chat.addMessage(payload.timestamp, payload.from, payload.body))
