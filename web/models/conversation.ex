@@ -44,7 +44,7 @@ defmodule ChatterboxHost.Conversation do
 
     # Join the first message for each conversation
     def id_and_message_info(query) do
-      query = from conv in query, left_join: messages in fragment(
+      from conv in query, left_join: messages in fragment(
       """
       (SELECT
       conversation_id, sender_name, content,
