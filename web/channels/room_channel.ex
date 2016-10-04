@@ -19,7 +19,7 @@ defmodule ChatterboxHost.RoomChannel do
   end
 
   def handle_info({:after_join, conversation_id}, socket) do
-    conversation = Repo.one(
+    conversation = Repo.one!(
       Ecto.Query.from c in Conversation, where: c.id == ^conversation_id, preload: [messages: ^Message.by_timestamp(Message)]
       )
     conversation.messages |> Enum.each(fn (message) ->
@@ -34,7 +34,7 @@ defmodule ChatterboxHost.RoomChannel do
   end
 
   def handle_in("new_msg", %{"body" => body, "user_name" => user_name, "user_id_token" => user_id_token}, socket) do
-    %Conversation{ended_at: nil} = Repo.get_by(Conversation, id: socket.assigns[:conversation_id])
+    %Conversation{ended_at: nil} = Repo.get_by!(Conversation, id: socket.assigns[:conversation_id])
     message = record_message(socket.assigns[:conversation_id], body, user_id_token, user_name)
 
     broadcast!(socket, "new_msg", %{timestamp: Ecto.DateTime.to_string(message.inserted_at), from: user_name, body: body,  })
