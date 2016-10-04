@@ -25,6 +25,7 @@ defmodule ChatterboxHost.Router do
     delete "/logout", SessionController, :delete
     get "/conversations/:id", ConversationController, :show
     get "/conversations",    ConversationController, :index
+    post "/set_tags/:id",    ConversationController, :set_tags
   end
 
   # Other scopes may use custom stacks.

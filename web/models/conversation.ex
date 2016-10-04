@@ -1,9 +1,10 @@
 defmodule ChatterboxHost.Conversation do
   use ChatterboxHost.Web, :model
-  alias ChatterboxHost.Conversation
+  alias ChatterboxHost.{Message,Tag}
 
   schema "chatterbox_conversations" do
-    has_many :messages, ChatterboxHost.Message
+    has_many :messages, Message
+    many_to_many :tags, Tag, join_through: "conversations_tags"
     field :ended_at, Ecto.DateTime
 
     timestamps
