@@ -23,9 +23,9 @@
   padding: 1em;
 }
 
-#chatbox .widget #messages {
-  max-height: 10em;
-  overflow: scroll;
+#chatbox #chatbox-messages {
+  max-height: 12em;
+  overflow-y: scroll;
 }
 
 #chatbox .chatbox-label {

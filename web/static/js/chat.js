@@ -107,6 +107,7 @@ if (document.getElementById("chatbox") !== null) {
       newMessage.innerHTML = `<span class="chatterbox-message-sender">${from}</span> <span class="chatterbox-message-timestamp">${timestamp}</span> <span class="chatterbox-message-contents">${message}</span>`
       newMessage.className = "chatbox-message"
       chatMessages.appendChild(newMessage)
+      chatMessages.scrollTop = chatMessages.scrollHeight // scroll to bottom
     }
 
     this.onAjaxSuccess = function(verb, url, callback) {
