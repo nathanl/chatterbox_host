@@ -1,4 +1,13 @@
 - Add tagging UI to conversations/show view, and display tags in the index view
+- Try to make this a separate package!!!
+  - Move to its own namespace
+  - Clear separation of lib/app responsibilities re: users, loading and persisting messages and convos, etc
+- Clean up query stuff for conversations
+- Label each message with some kind of per-user id so that we can style each speaker's differently - eg CSS colors for `message.user1...message.user9` probably enough.
+- Add "is typing" indicators for users who are not self.
+- Populate only the most recent N messages in a conversation when backfilling history, and load more as the user scrolls up
+  - With this, we can then have some infinite conversations (don't allow closing) for back-channel talk between cs reps ("I need some help here", etc)
+- Clean up path references
 - In setup:
   - Prompt user for name if not logged in (currently using "Anonymous")
   - Set up chat window, using given chat room name and username
