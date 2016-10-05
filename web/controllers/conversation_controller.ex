@@ -55,8 +55,8 @@ defmodule ChatterboxHost.ConversationController do
     end)
     Repo.transaction(multi)
 
-    # TODO should not need to use 'external' here; fix local_referer, maybe PR to framework?
-    redirect conn, external: referer(conn)
+    # TODO ask about and maybe do a PR on Phoenix to add this?
+    redirect conn, to: local_referer(conn)
   end
 
   defp conversation_with_tags(conversation_id) do
@@ -74,14 +74,18 @@ defmodule ChatterboxHost.ConversationController do
   def referer(conn) do
     case List.keyfind(conn.req_headers, "referer", 0) do
       {"referer", referer} -> referer
-      nil -> raise "no referer"
+      nil                  -> raise "no referer"
     end
   end
 
-  # def local_referer(conn) do
-  #   url = conn |> referer
-  #   start = "#{conn.schema}//#{conn.host}:#{conn.port}/"
-  #   start <> local_path = url
-  #   # "#{start}/#{local_path}" = url
-  # end
+  def local_referer(conn) do
+    referer_url  = referer(conn)
+    referer_host = URI.parse(referer_url).host
+    if referer_host == conn.host do
+      URI.parse(referer_url).path
+    else
+      raise "not a local path"
+    end
+  end
+      
 end
