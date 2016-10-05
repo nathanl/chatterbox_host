@@ -7,6 +7,7 @@
 - Add "is typing" indicators for users who are not self.
 - Populate only the most recent N messages in a conversation when backfilling history, and load more as the user scrolls up
   - With this, we can then have some infinite conversations (don't allow closing) for back-channel talk between cs reps ("I need some help here", etc)
+  - *Maybe* use "who is in the lounge channel" to decide whether any cs reps are available to chat? We need a conditional for that in the views to show the chat feature...
 - Clean up path references
 - In setup:
   - Prompt user for name if not logged in (currently using "Anonymous")
