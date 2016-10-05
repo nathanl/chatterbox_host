@@ -10,7 +10,7 @@
     <% checked = id in @current_tag_ids %>
     <%= checkbox :tag_ids, "#{id}", value: name, checked: checked %> <%= name %>
     <%= end %>
-  <%= submit "Update Tags (not yet implemented)", disabled: false %>
+  <%= submit "Update Tags", disabled: false %>
 <% end %>
 
 <%= render ChatterboxHost.LayoutView, "_chatbox.html", chatbox_class: "cs-support#{if @ended, do: " ended"}", conversation_id: @id, ended: @ended %>
