@@ -24,12 +24,12 @@ defmodule ChatterboxHost.Message do
     # |> validate_length(:content, max: @max_content_size)
   end
 
-  def by_timestamp(query) do
-    from m in query, order_by: m.inserted_at
+  def sequential(query) do
+    from c in query, order_by: [asc: c.id]
   end
 
-  def first_by_timestamp(query) do
-    query |>  by_timestamp |> limit(1)
+  def reverse_sequential(query) do
+    from c in query, order_by: [desc: c.id]
   end
 
 end
