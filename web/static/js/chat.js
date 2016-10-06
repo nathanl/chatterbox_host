@@ -78,7 +78,7 @@ if (document.getElementById("chatbox") !== null) {
           }
 
           chat.endConversationButton.addEventListener("click", event => {
-            chat.endConversation()
+            chat.closeChat()
           })
 
           chat.socket = new Socket("/chatterbox_socket", {})
@@ -168,18 +168,19 @@ if (document.getElementById("chatbox") !== null) {
       this.chatBox.appendChild(errorDiv)
     }
 
-    this.endConversation = function() {
+    this.closeChat = function() {
       this.onAjaxSuccess(
         "PUT",
         `/api/close_conversation/${this.conversation_id_token}`, (chatSessionInfo) => {
           eraseCookie("conversationId") // TODO - do this?
+          this.chatSessionCleared = true
           this.channel.push("conversation_closed", {
             ended_at: chatSessionInfo.ended_at,
             ended_by: this.user_name,
             user_id_token: this.user_id_token,
           })
-          this.chatSessionCleared = true
         }
+        // TODO: hide the window, redraw as an x
       )
     }
 
@@ -187,13 +188,7 @@ if (document.getElementById("chatbox") !== null) {
       chat.swapClass(this.chatBox, "active", "ended")
       chat.socket.disconnect()
       this.onSubmit = function(event) { event.preventDefault() }
-      // TODO - instead, disable the button
-      this.endConversation = function(){}
       this.chatInput.parentNode.removeChild(this.chatInput)
-      if (!this.userIsCsRep && !this.chatSessionCleared) {
-        eraseCookie("conversationId")
-        this.chatSessionCleared = true
-      }
     }
 
     this.isBlank = function(string) {
