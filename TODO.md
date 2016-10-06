@@ -1,8 +1,13 @@
-- Add tagging UI to conversations/show view, and display tags in the index view
 - Try to make this a separate package!!!
   - Move to its own namespace
   - Clear separation of lib/app responsibilities re: users, loading and persisting messages and convos, etc
+- Change conversations list from JS polling to push via a socket
+- All conversations page
+  - show rep name who last helped
+  - show last message for context (not first?)
 - Clean up query stuff for conversations
+- user needs to be able to save the chat history
+- cs rep should be able to add notes to a conversation
 - Label each message with some kind of per-user id so that we can style each speaker's differently - eg CSS colors for `message.user1...message.user9` probably enough.
 - Add "is typing" indicators for users who are not self.
 - Populate only the most recent N messages in a conversation when backfilling history, and load more as the user scrolls up
