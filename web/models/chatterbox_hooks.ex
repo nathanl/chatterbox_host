@@ -3,6 +3,7 @@ defmodule Chatterbox.Hooks do
   use ChatterboxHost.Web, :controller
 
   def user_for_session(conn) do
+    conn = conn |> fetch_session
     user = with user_id when is_integer(user_id) <- (conn |> get_session(:user_id)),
     do: Repo.get_by(User, id: user_id)
 

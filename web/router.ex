@@ -2,7 +2,6 @@ defmodule ChatterboxHost.Router do
   use ChatterboxHost.Web, :router
 
   pipeline :browser do
-    plug ChatterboxPlug
     plug :accepts, ["html"]
     plug :fetch_session
     plug :fetch_flash
@@ -11,7 +10,6 @@ defmodule ChatterboxHost.Router do
   end
 
   pipeline :api do
-    plug ChatterboxPlug
     plug :accepts, ["json"]
   end
 
