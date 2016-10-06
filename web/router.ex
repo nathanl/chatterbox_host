@@ -34,6 +34,5 @@ defmodule ChatterboxHost.Router do
     get  "/get_help",                        ChatSessionController, :get_help
     get  "/give_help/:conversation_id",      ChatSessionController, :give_help
     put  "/close_conversation/:conversation_id_token", ChatSessionController, :close_conversation
-    put  "/clear_chat_session", ChatSessionController, :clear
   end
 end
