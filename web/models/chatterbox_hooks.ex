@@ -14,7 +14,7 @@ defmodule Chatterbox.Hooks do
 
   # default implementation
   # def user_for_session(conn) do
-  #   %{id: nil,     name: "User"}
+  #   %{id: nil,     name: nil}
   # end
 
 end

@@ -12,7 +12,7 @@ defmodule ChatterboxHost.ChatSessionController do
         conversation_id_token = Phoenix.Token.sign(Endpoint, "conversation_id", conversation_id)
         %{
           user_id_token: user_id_token,
-          user_name: cs_rep.name,
+          user_name: cs_rep.name || "Representative",
           channel_name: "conversation:#{conversation_id}",
           conversation_id_token: conversation_id_token
         }
@@ -30,7 +30,7 @@ defmodule ChatterboxHost.ChatSessionController do
 
     conversation_id_token = Phoenix.Token.sign(Endpoint, "conversation_id", conversation_id)
 
-    render conn, user_id_token: user_id_token, user_name: user.name, channel_name: "conversation:#{conversation_id}", conversation_id_token: conversation_id_token
+    render conn, user_id_token: user_id_token, user_name: user.name || "User", channel_name: "conversation:#{conversation_id}", conversation_id_token: conversation_id_token
   end
 
   def close_conversation(conn, %{"conversation_id_token" => conversation_id_token}) do
