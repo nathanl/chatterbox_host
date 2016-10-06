@@ -1,33 +1,28 @@
 defmodule ChatterboxHost.ChatSessionController do
   use ChatterboxHost.Web, :controller
-  alias ChatterboxHost.{Endpoint,Repo,User,Conversation}
+  alias ChatterboxHost.{Endpoint,Repo,Conversation}
 
   def give_help(conn, %{"conversation_id" => conversation_id}) do
     conversation = Repo.get_by(Conversation, id: conversation_id)
     render_data = case conversation do
       nil -> %{error: "The requested conversation does not exist"}
       %Conversation{} ->
-        user = user_for_session(conn)
-        case user_may_join_conversation?(user, conversation) do
-          :ok -> 
-            user_id_token = user_id_token(user)
-            conversation_id_token = Phoenix.Token.sign(Endpoint, "conversation_id", conversation_id)
-            %{
-              user_id_token: user_id_token,
-              user_name: user.name,
-              channel_name: "conversation:#{conversation_id}",
-              conversation_id_token: conversation_id_token
-            }
-          {:error, message} ->
-            %{error: message}
-        end
+        cs_rep = Chatterbox.Hooks.user_for_session(conn)
+        user_id_token = user_id_token(cs_rep)
+        conversation_id_token = Phoenix.Token.sign(Endpoint, "conversation_id", conversation_id)
+        %{
+          user_id_token: user_id_token,
+          user_name: cs_rep.name,
+          channel_name: "conversation:#{conversation_id}",
+          conversation_id_token: conversation_id_token
+        }
     end
 
     render conn, render_data
   end
 
   def get_help(conn, _params) do
-    user = user_for_session(conn)
+    user = Chatterbox.Hooks.user_for_session(conn)
     
     user_id_token = user_id_token(user)
 
@@ -85,27 +80,6 @@ defmodule ChatterboxHost.ChatSessionController do
       conn |> put_session(:getting_help_in_conversation_id, nil)
     else
       _ -> conn
-    end
-  end
-
-  # TODO move this to a module; app is responsible for it
-  defp user_may_join_conversation?(user, _conversation) do
-    case user do
-      %User{cs_rep: true} -> :ok
-      %User{}             -> {:error, "You are not allowed to join this conversation"}
-      _                   -> {:error, "Anonymous users may not join existing conversations"}
-    end
-  end
-
-  # TODO move this to a module; app is responsible for it
-  # could be a null user
-  defp user_for_session(conn) do
-    user = with user_id when is_integer(user_id) <- (conn |> get_session(:user_id)),
-    do: Repo.get_by(User, id: user_id)
-
-    case user do
-      %User{} -> user
-      _       -> %{id: nil, name: "Anonymous"}
     end
   end
 
