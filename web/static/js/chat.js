@@ -39,7 +39,7 @@ if (document.getElementById("chatbox") !== null) {
     this.chatBox               = document.getElementById("chatbox")
     this.chatInput             = document.getElementById("chatbox-input")
     let chatMessages           = document.getElementById("chatbox-messages")
-    this.endConversationButton = document.getElementById("chatbox-end-conversation")
+    this.closeChatButton       = document.getElementById("chatbox-close-chat")
 
     this.userIsCsRep   = !!this.chatBox.className.match("cs-support")
 
@@ -77,7 +77,7 @@ if (document.getElementById("chatbox") !== null) {
             createCookie("conversationId", chat.conversation_id_token)
           }
 
-          chat.endConversationButton.addEventListener("click", event => {
+          chat.closeChatButton.addEventListener("click", event => {
             chat.closeChat()
           })
 
@@ -169,18 +169,21 @@ if (document.getElementById("chatbox") !== null) {
     }
 
     this.closeChat = function() {
+      // TODO - don't send this request if we know the conversation is already closed
       this.onAjaxSuccess(
         "PUT",
         `/api/close_conversation/${this.conversation_id_token}`, (chatSessionInfo) => {
-          eraseCookie("conversationId") // TODO - do this?
+          eraseCookie("conversationId")
           this.chatSessionCleared = true
           this.channel.push("conversation_closed", {
             ended_at: chatSessionInfo.ended_at,
             ended_by: this.user_name,
             user_id_token: this.user_id_token,
           })
+          if (!this.userIsCsRep) {
+            this.chatBox.parentNode.removeChild(this.chatBox)
+          }
         }
-        // TODO: hide the window, redraw as an x
       )
     }
 
@@ -189,6 +192,9 @@ if (document.getElementById("chatbox") !== null) {
       chat.socket.disconnect()
       this.onSubmit = function(event) { event.preventDefault() }
       this.chatInput.parentNode.removeChild(this.chatInput)
+      if (this.userIsCsRep) {
+        this.closeChatButton.parentNode.removeChild(this.closeChatButton)
+      }
     }
 
     this.isBlank = function(string) {

@@ -58,7 +58,7 @@
   color: red;
 }
 
-#chatbox button#chatbox-end-conversation {
+#chatbox button#chatbox-close-chat {
   background-color: red;
   color: white;
   margin-left: 10px;

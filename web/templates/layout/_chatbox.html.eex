@@ -2,7 +2,7 @@
   <div class="active state">
     <div class="chatbox-label">
       Live Chat, woo!
-      <button id="chatbox-end-conversation">Close Chat</button>
+      <button id="chatbox-close-chat">✗</button>
     </div>
     <div id="chatbox-messages" tabindex="0">
     </div>
