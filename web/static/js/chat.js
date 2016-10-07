@@ -99,6 +99,7 @@ if (document.getElementById("chatbox") !== null) {
               user_id_token: user_id_token,
             })
             .receive("ok", response => {
+              // TODO - uh, this is useless, right? handled above?
               response.messages.forEach(body => chat.addMessage(response.from, body))
             })
           })
@@ -210,4 +211,18 @@ if (document.getElementById("chatbox") !== null) {
 
   let chat = new Chat()
   chat.checkAndMaybeStart()
+}
+
+if (document.getElementById("chatterbox-dashboard") !== null) {
+  let socket = new Socket("/chatterbox_socket", {})
+  socket.connect()
+  let channel = socket.channel("cs_panel", {})
+
+  channel.on("panel_update", payload => {console.log("panel update!", payload)})
+
+  channel.join()
+  .receive("ok", resp => console.log("Joined successfully", resp))
+  .receive("error", resp => console.log("Unable to join", resp))
+
+  console.log("still here...")
 }

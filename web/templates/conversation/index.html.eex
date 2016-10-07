@@ -14,8 +14,3 @@
     </div>
   <% end) %>
 </div>
-
-<script>
-  // You want live updates, you say!?! READ AND WEEP! 😜
-  setTimeout(function() { location.reload(true) }, 4000);
-</script>
