@@ -9,6 +9,7 @@
 - Clean up query stuff for conversations
 - user needs to be able to save the chat history
 - cs rep should be able to add notes to a conversation
+- when conversation is closed, don't throw away the window; return it to initial state so they can start a new one if they want.
 - Label each message with some kind of per-user id so that we can style each speaker's differently - eg CSS colors for `message.user1...message.user9` probably enough.
 - Add "is typing" indicators for users who are not self.
 - Populate only the most recent N messages in a conversation when backfilling history, and load more as the user scrolls up
