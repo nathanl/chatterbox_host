@@ -1,29 +1,30 @@
 // TODO - have this ask you for a name if we don't know it yet
 import {Socket} from "phoenix"
 
-function createCookie(name,value,days) {
-    if (days) {
-        var date = new Date();
-        date.setTime(date.getTime()+(days*24*60*60*1000));
-        var expires = "; expires="+date.toGMTString();
-    }
-    else var expires = "";
-    document.cookie = name+"="+value+expires+"; path=/";
-}
-
-function readCookie(name) {
+// TODO put this in a separate file and import, or use https://github.com/ScottHamper/Cookies
+let cookie = {
+  read: function(name) {
     var nameEQ = name + "=";
     var ca = document.cookie.split(';');
     for(var i=0;i < ca.length;i++) {
-        var c = ca[i];
-        while (c.charAt(0)==' ') c = c.substring(1,c.length);
-        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+      var c = ca[i];
+      while (c.charAt(0)==' ') c = c.substring(1,c.length);
+      if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
     }
     return null;
-}
+  },
 
-function eraseCookie(name) {
-    createCookie(name,"",-1);
+  write: function(name,value,days) {
+    if (days) {
+      var date = new Date();
+      date.setTime(date.getTime()+(days*24*60*60*1000));
+      var expires = "; expires="+date.toGMTString();
+    }
+    else var expires = "";
+    document.cookie = name+"="+value+expires+"; path=/";
+  },
+
+  erase: function(name) { this.write(name,"",-1); }
 }
 
 if (document.getElementById("chatbox") !== null) {
@@ -44,7 +45,7 @@ if (document.getElementById("chatbox") !== null) {
     this.userIsCsRep   = !!this.chatBox.className.match("cs-support")
 
     this.checkAndMaybeStart = function(){
-      let inChatSession = !!readCookie("conversationId")
+      let inChatSession = !!cookie.read("conversationId")
 
       if (inChatSession || this.userIsCsRep) {
         this.startChat()
@@ -74,7 +75,7 @@ if (document.getElementById("chatbox") !== null) {
           chat.conversation_id_token = chatSessionInfo.conversation_id_token
 
           if (!chat.userIsCsRep) {
-            createCookie("conversationId", chat.conversation_id_token)
+            cookie.write("conversationId", chat.conversation_id_token)
           }
 
           chat.closeChatButton.addEventListener("click", event => {
@@ -110,7 +111,7 @@ if (document.getElementById("chatbox") !== null) {
       if (this.userIsCsRep) {
         url = `/api/give_help/${this.chatBox.dataset.conversationId}`
       } else {
-        let conversation_id = readCookie("conversationId")
+        let conversation_id = cookie.read("conversationId")
         url = `/api/get_help?conversation_id_token=${conversation_id}`
       }
       this.onAjaxSuccess("GET", url, handleSessionInfo)
@@ -173,7 +174,7 @@ if (document.getElementById("chatbox") !== null) {
       this.onAjaxSuccess(
         "PUT",
         `/api/close_conversation/${this.conversation_id_token}`, (chatSessionInfo) => {
-          eraseCookie("conversationId")
+          cookie.erase("conversationId")
           this.chatSessionCleared = true
           this.channel.push("conversation_closed", {
             ended_at: chatSessionInfo.ended_at,
