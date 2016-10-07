@@ -63,6 +63,9 @@ defmodule ChatterboxHost.Conversation do
       (SELECT
       conversation_id,
       -- COUNT DISTINCT ignores nulls, hence the COALESCE
+      -- this handles the case where there is at least one message,
+      -- but it has no sender_id; call it '0' so we can count
+      -- it as one unique participant
       COUNT(DISTINCT COALESCE(sender_id, 0)) AS participant_count
       FROM chatterbox_messages
       GROUP BY conversation_id
@@ -86,13 +89,15 @@ defmodule ChatterboxHost.Conversation do
   # TODO find way to make these part of query
     def unanswered(conversations) do
       conversations |> Enum.filter(fn (conversation) ->
-        conversation.participant_count <= 1
+        conversation.participant_count == 1
       end)
     end
 
     def ongoing(conversations) do
       conversations |> Enum.filter(fn (conversation) ->
-        conversation.participant_count > 1
+        # If there are no messages, participant_count will come back
+        # nil from the query
+        (conversation.participant_count || 0) > 1
       end)
     end
   end

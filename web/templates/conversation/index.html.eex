@@ -8,7 +8,7 @@
         <div class="conversation">
           <%= link("💬💬", to: "/conversations/#{conversation.id}") %>
           <span class="user-name"><%= raw(conversation.first_message.sender_name) %></span>
-          <span class="opening-message"><%= raw(conversation.first_message.content || "(No message yet)") %></span>
+          <span class="opening-message"><%= raw(conversation.first_message.content) %></span>
         </div>
       <% end) %>
     </div>
