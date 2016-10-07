@@ -2,6 +2,7 @@
   - Move to its own namespace
   - Clear separation of lib/app responsibilities re: users, loading and persisting messages and convos, etc
 - Change conversations list from JS polling to push via a socket
+- Once conversations list is a socket, use "is anybody on that socket?" to decide if CS reps are available. `Phoenix.PubSub.subscribers("rooms:demo")` was from http://www.phoenixframework.org/v0.8.0/docs/channels, maybe that's https://hexdocs.pm/phoenix_pubsub/Phoenix.PubSub.Local.html#subscribers/3 but it seems too low level and I don't know what args to give it
 - All conversations page
   - show rep name who last helped
   - show last message for context (not first?)
