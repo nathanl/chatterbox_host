@@ -3,6 +3,7 @@ defmodule ChatterboxHost.CsPanelChannel do
   alias ChatterboxHost.{Repo,Conversation,Message}
   alias Conversation.{Scopes,Filters}
   require Ecto.Query
+  @closed_conversation_count 10 # TODO make configurable
 
   def join("cs_panel", _params, socket) do
     {:ok, socket}
@@ -22,7 +23,7 @@ defmodule ChatterboxHost.CsPanelChannel do
     conversations = [
       {"Unanswered", (query |> Scopes.not_ended |> Scopes.sequential |> Repo.all |> Filters.unanswered)},
       {"Ongoing", (query |> Scopes.not_ended |> Scopes.sequential |> Repo.all |> Filters.ongoing)},
-      {"Ended", (query |> Scopes.ended |> Scopes.reverse_sequential |> Ecto.Query.limit(3) |> Repo.all)},
+      {"Ended", (query |> Scopes.ended |> Scopes.reverse_sequential |> Ecto.Query.limit(@closed_conversation_count) |> Repo.all)},
     ]
   end
 
