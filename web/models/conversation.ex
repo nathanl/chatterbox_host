@@ -26,6 +26,7 @@ defmodule ChatterboxHost.Conversation do
     not is_nil(conversation.ended_at)
   end
 
+
   defmodule Scopes do
 
     def not_ended(query) do
@@ -42,6 +43,10 @@ defmodule ChatterboxHost.Conversation do
 
     def reverse_sequential(query) do
       from c in query, order_by: [desc: c.id]
+    end
+
+    def with_tags(query) do
+      from c in query, preload: :conversation_tags
     end
 
     # Join the first message for each conversation

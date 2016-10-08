@@ -4,16 +4,7 @@ defmodule ChatterboxHost.ConversationController do
   alias Conversation.{Scopes,Filters}
 
   def index(conn, _assigns) do
-    query =
-      Conversation
-      |> Scopes.id_and_message_info
-
-    conversations = [
-      {"Unanswered", (query |> Scopes.not_ended |> Scopes.sequential |> Repo.all |> Filters.unanswered)},
-      {"Ongoing", (query |> Scopes.not_ended |> Scopes.sequential |> Repo.all |> Filters.ongoing)},
-      {"Ended", (query |> Scopes.ended |> Scopes.reverse_sequential |> limit(3) |> Repo.all)},
-    ]
-
+    conversations = ChatterboxHost.CsPanelChannel.collection_for_cs_panel
     render conn, conversations: conversations, layout: {ConversationView, "layout.html"}
   end
 
@@ -55,13 +46,15 @@ defmodule ChatterboxHost.ConversationController do
     end)
     Repo.transaction(multi)
 
+    ChatterboxHost.CsPanelChannel.send_updated_panel
+
     # TODO ask about and maybe do a PR on Phoenix to add this?
     redirect conn, to: local_referer(conn)
   end
 
   defp conversation_with_tags(conversation_id) do
-    query = from c in Conversation, where: c.id == ^conversation_id, preload: :conversation_tags
-    ChatterboxHost.Repo.one!(query)
+    query = from c in Conversation, where: c.id == ^conversation_id
+    ChatterboxHost.Repo.one!(Conversation.Scopes.with_tags(query))
   end
 
   defp checked_values_from(checkbox_params) do

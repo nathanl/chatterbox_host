@@ -214,15 +214,17 @@ if (document.getElementById("chatbox") !== null) {
 }
 
 if (document.getElementById("chatterbox-dashboard") !== null) {
+  let main = document.getElementById("main")
+
   let socket = new Socket("/chatterbox_socket", {})
   socket.connect()
   let channel = socket.channel("cs_panel", {})
 
-  channel.on("panel_update", payload => {console.log("panel update!", payload)})
+  channel.on("panel_update", payload => {
+    main.innerHTML = payload.body
+  })
 
   channel.join()
   .receive("ok", resp => console.log("Joined successfully", resp))
   .receive("error", resp => console.log("Unable to join", resp))
-
-  console.log("still here...")
 }
