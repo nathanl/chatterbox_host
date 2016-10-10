@@ -1,6 +1,7 @@
 defmodule ChatterboxHost.ChatSessionController do
   use ChatterboxHost.Web, :controller
-  alias ChatterboxHost.{Endpoint,Repo,Conversation}
+  alias ChatterboxHost.{Endpoint,Repo}
+  alias Consult.Conversation
 
   def give_help(conn, %{"conversation_id" => conversation_id}) do
     conversation = Repo.get_by(Conversation, id: conversation_id)

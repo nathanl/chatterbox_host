@@ -1,6 +1,13 @@
 defmodule ChatterboxHost.ConversationController do
-  use ChatterboxHost.Web, :controller
-  alias ChatterboxHost.{Conversation,ConversationView,Tag,ConversationTag}
+  use Phoenix.Controller
+  alias ChatterboxHost.Repo
+  import Ecto
+  import Ecto.Query
+  import ChatterboxHost.Router.Helpers
+  import ChatterboxHost.Gettext
+
+  alias Consult.{Conversation,Tag,ConversationTag}
+  alias ChatterboxHost.{ConversationView}
   alias Conversation.{Scopes,Filters}
 
   def index(conn, _assigns) do

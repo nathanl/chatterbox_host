@@ -1,6 +1,9 @@
-defmodule ChatterboxHost.Message do
-  use ChatterboxHost.Web, :model
-  alias ChatterboxHost.Message
+defmodule Consult.Message do
+  use Ecto.Schema
+  import Ecto
+  import Ecto.Changeset
+  import Ecto.Query
+  alias Consult.Message
 
   schema "chatterbox_messages" do
 

@@ -1,5 +1,8 @@
-defmodule ChatterboxHost.Tag do
-  use ChatterboxHost.Web, :model
+defmodule Consult.Tag do
+  use Ecto.Schema
+  import Ecto
+  import Ecto.Changeset
+  import Ecto.Query
 
   schema "chatterbox_tags" do
     field :name, :string

@@ -1,6 +1,7 @@
 defmodule Consult.CsPanelChannel do
   use Phoenix.Channel
-  alias ChatterboxHost.{Repo,Conversation}
+  alias ChatterboxHost.Repo
+  alias Consult.Conversation
   alias Conversation.{Scopes,Filters}
   require Ecto.Query
   @closed_conversation_count 10 # TODO make configurable

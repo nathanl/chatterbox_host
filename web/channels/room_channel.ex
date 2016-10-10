@@ -1,6 +1,7 @@
 defmodule ChatterboxHost.RoomChannel do
   use Phoenix.Channel
-  alias ChatterboxHost.{Repo,Conversation,Message}
+  alias Consult.{Conversation,Message}
+  alias ChatterboxHost.Repo
   require Ecto.Query
 
   def join("conversation:" <> requested_id, %{"conversation_id_token" => conversation_id_token}, socket) do

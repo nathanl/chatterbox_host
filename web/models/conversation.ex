@@ -1,6 +1,10 @@
-defmodule ChatterboxHost.Conversation do
-  use ChatterboxHost.Web, :model
-  alias ChatterboxHost.{Message,Tag,ConversationTag}
+defmodule Consult.Conversation do
+  use Ecto.Schema
+  import Ecto
+  import Ecto.Changeset
+  import Ecto.Query
+
+  alias Consult.{Message,Tag,ConversationTag}
 
   schema "chatterbox_conversations" do
     has_many :messages, Message

@@ -1,6 +1,9 @@
-defmodule ChatterboxHost.ConversationTag do
-  use ChatterboxHost.Web, :model
-  alias ChatterboxHost.{Conversation,ConversationTag,Tag}
+defmodule Consult.ConversationTag do
+  use Ecto.Schema
+  import Ecto
+  import Ecto.Changeset
+  import Ecto.Query
+  alias Consult.{Conversation,ConversationTag,Tag}
 
   schema "chatterbox_conversations_tags" do
     belongs_to :conversation, Conversation
