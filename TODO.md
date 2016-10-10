@@ -31,6 +31,8 @@
 
 # Name ideas, if packagified
 
+"Consult" is the winner
+
 - "Help" related
   - Boost*
   - Support

@@ -7,7 +7,7 @@ defmodule ChatterboxHost.ChatSessionController do
     render_data = case conversation do
       nil -> %{error: "The requested conversation does not exist"}
       %Conversation{} ->
-        cs_rep = Chatterbox.Hooks.user_for_session(conn)
+        cs_rep = Consult.Hooks.user_for_session(conn)
         user_id_token = user_id_token(cs_rep)
         conversation_id_token = Phoenix.Token.sign(Endpoint, "conversation_id", conversation_id)
         %{
@@ -22,7 +22,7 @@ defmodule ChatterboxHost.ChatSessionController do
   end
 
   def get_help(conn, %{"conversation_id_token" => conversation_id_token}) do
-    user = Chatterbox.Hooks.user_for_session(conn)
+    user = Consult.Hooks.user_for_session(conn)
     
     user_id_token = user_id_token(user)
 

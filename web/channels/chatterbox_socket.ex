@@ -3,7 +3,7 @@ defmodule ChatterboxHost.ChatterboxSocket do
 
   ## Channels
   channel "conversation:*", ChatterboxHost.RoomChannel
-  channel "cs_panel", ChatterboxHost.CsPanelChannel
+  channel "cs_panel", Consult.CsPanelChannel
 
   ## Transports
   transport :websocket, Phoenix.Transports.WebSocket

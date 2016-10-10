@@ -1,4 +1,4 @@
-defmodule Chatterbox.Hooks do
+defmodule Consult.Hooks do
   alias ChatterboxHost.{Repo,User}
   use ChatterboxHost.Web, :controller
 

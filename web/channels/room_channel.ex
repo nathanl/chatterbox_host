@@ -38,7 +38,7 @@ defmodule ChatterboxHost.RoomChannel do
     message = record_message(socket.assigns[:conversation_id], body, user_id_token, user_name)
 
     broadcast!(socket, "new_msg", %{timestamp: Ecto.DateTime.to_string(message.inserted_at), from: user_name, body: body,  })
-    ChatterboxHost.CsPanelChannel.send_updated_panel
+    Consult.CsPanelChannel.send_updated_panel
     {:noreply, socket}
   end
 
@@ -49,7 +49,7 @@ defmodule ChatterboxHost.RoomChannel do
 
     broadcast!(socket, "new_msg", %{timestamp: Ecto.DateTime.to_string(message.inserted_at), from: sender_name, body: body})
     broadcast!(socket, "conversation_closed", %{})
-    ChatterboxHost.CsPanelChannel.send_updated_panel
+    Consult.CsPanelChannel.send_updated_panel
     {:noreply, socket}
   end
 

@@ -4,7 +4,7 @@ defmodule ChatterboxHost.ConversationController do
   alias Conversation.{Scopes,Filters}
 
   def index(conn, _assigns) do
-    conversations = ChatterboxHost.CsPanelChannel.collection_for_cs_panel
+    conversations = Consult.CsPanelChannel.collection_for_cs_panel
     render conn, conversations: conversations, layout: {ConversationView, "layout.html"}
   end
 
@@ -46,7 +46,7 @@ defmodule ChatterboxHost.ConversationController do
     end)
     Repo.transaction(multi)
 
-    ChatterboxHost.CsPanelChannel.send_updated_panel
+    Consult.CsPanelChannel.send_updated_panel
 
     # TODO ask about and maybe do a PR on Phoenix to add this?
     redirect conn, to: local_referer(conn)
