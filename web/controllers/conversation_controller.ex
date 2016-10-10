@@ -54,7 +54,7 @@ defmodule ChatterboxHost.ConversationController do
 
   defp conversation_with_tags(conversation_id) do
     query = from c in Conversation, where: c.id == ^conversation_id
-    ChatterboxHost.Repo.one!(Conversation.Scopes.with_tags(query))
+    ChatterboxHost.Repo.one!(Conversation.Scopes.with_conversation_tags(query))
   end
 
   defp checked_values_from(checkbox_params) do

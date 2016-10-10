@@ -18,7 +18,7 @@ alias ChatterboxHost.{Repo,User,Tag}
   User.changeset(%User{}, attrs) |> Repo.insert!
 end)
 
-["Bug", "Complaint", "Product Question"]
+["bug", "complaint", "product_question"]
 |> Enum.each(fn (tag_name) ->
   %Tag{name: tag_name} |> Repo.insert!
 end)

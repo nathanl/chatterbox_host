@@ -45,13 +45,13 @@ defmodule ChatterboxHost.Conversation do
       from c in query, order_by: [desc: c.id]
     end
 
-    def with_tags(query) do
+    def with_conversation_tags(query) do
       from c in query, preload: :conversation_tags
     end
 
     # Join the first message for each conversation
     def id_and_message_info(query) do
-      from conv in query, left_join: messages in fragment(
+      db_result = from conv in query, left_join: messages in fragment(
       """
       (SELECT
       conversation_id, sender_name, content,
@@ -77,9 +77,13 @@ defmodule ChatterboxHost.Conversation do
       )
       """
       ), on: participants.conversation_id == conv.id,
+      left_join: tags in assoc(conv, :tags),
+      preload: [tags: tags],
       select: %{
+        conv: conv,
         id: conv.id,
         participant_count: participants.participant_count,
+        tags: [tags],
         first_message: %{
           sender_name: messages.sender_name,
           content: messages.content
