@@ -1,3 +1,5 @@
+- Show the tags in conv index
+- Make updating the tax an AJAX request, not a page reload
 - Try to make this a separate package!!!
   - Move to its own namespace
   - Clear separation of lib/app responsibilities re: users, loading and persisting messages and convos, etc
