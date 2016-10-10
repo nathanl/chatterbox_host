@@ -221,7 +221,7 @@ if (document.getElementById("chatterbox-dashboard") !== null) {
   let channel = socket.channel("cs_panel", {})
 
   channel.on("panel_update", payload => {
-    main.innerHTML = payload.body
+    main.innerHTML = payload.main_contents
   })
 
   channel.join()

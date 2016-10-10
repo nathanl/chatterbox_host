@@ -10,9 +10,13 @@ defmodule ChatterboxHost.CsPanelChannel do
   end
 
   def send_updated_panel do
-    {:safe, iodata} = Phoenix.View.render(ChatterboxHost.ConversationView, "index.html",conversations: collection_for_cs_panel)
-    html = :erlang.iolist_to_binary(iodata)
-  ChatterboxHost.Endpoint.broadcast("cs_panel", "panel_update", %{body: html})
+    {:safe, html_iodata} = Phoenix.View.render(
+      ChatterboxHost.ConversationView, "index.html",conversations: collection_for_cs_panel
+    )
+    html_string = :erlang.iolist_to_binary(html_iodata)
+    ChatterboxHost.Endpoint.broadcast(
+      "cs_panel", "panel_update", %{main_contents: html_string}
+    )
   end
 
   def collection_for_cs_panel do
