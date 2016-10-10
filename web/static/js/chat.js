@@ -110,10 +110,10 @@ if (document.getElementById("chatbox") !== null) {
     this.requestChatSession = function(handleSessionInfo) {
       let url = null
       if (this.userIsCsRep) {
-        url = `/api/give_help/${this.chatBox.dataset.conversationId}`
+        url = `/consult/api/give_help/${this.chatBox.dataset.conversationId}`
       } else {
         let conversation_id = cookie.read("conversationId")
-        url = `/api/get_help?conversation_id_token=${conversation_id}`
+        url = `/consult/api/get_help?conversation_id_token=${conversation_id}`
       }
       this.onAjaxSuccess("GET", url, handleSessionInfo)
     }
@@ -174,7 +174,7 @@ if (document.getElementById("chatbox") !== null) {
       // TODO - don't send this request if we know the conversation is already closed
       this.onAjaxSuccess(
         "PUT",
-        `/api/close_conversation/${this.conversation_id_token}`, (chatSessionInfo) => {
+        `/consult/api/close_conversation/${this.conversation_id_token}`, (chatSessionInfo) => {
           cookie.erase("conversationId")
           this.chatSessionCleared = true
           this.channel.push("conversation_closed", {

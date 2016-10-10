@@ -12,7 +12,7 @@ defmodule Consult.CsPanelChannel do
 
   def send_updated_panel do
     {:safe, html_iodata} = Phoenix.View.render(
-      ChatterboxHost.ConversationView, "index.html",conversations: collection_for_cs_panel
+      Consult.ConversationView, "index.html",conversations: collection_for_cs_panel
     )
     html_string = :erlang.iolist_to_binary(html_iodata)
     ChatterboxHost.Endpoint.broadcast(

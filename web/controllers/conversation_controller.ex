@@ -1,4 +1,4 @@
-defmodule ChatterboxHost.ConversationController do
+defmodule Consult.ConversationController do
   use Phoenix.Controller
   alias ChatterboxHost.Repo
   import Ecto
@@ -12,7 +12,7 @@ defmodule ChatterboxHost.ConversationController do
 
   def index(conn, _assigns) do
     conversations = Consult.CsPanelChannel.collection_for_cs_panel
-    render conn, conversations: conversations, layout: {ConversationView, "layout.html"}
+    render conn, conversations: conversations, layout: {Consult.ConversationView, "layout.html"}
   end
 
   def show(conn, %{"id" => conversation_id}) do
@@ -20,7 +20,7 @@ defmodule ChatterboxHost.ConversationController do
     possible_tags = Repo.all(Tag) |> Enum.map(fn(tag) -> {tag.name, tag.id} end)
     render(conn, "show.html", %{
       id: conversation_id,
-      layout: {ConversationView, "layout.html"},
+      layout: {Consult.ConversationView, "layout.html"},
       ended: Conversation.ended?(conversation),
       possible_tags: possible_tags,
       current_tag_ids: (conversation.conversation_tags |> Enum.map(&(&1.tag_id))),

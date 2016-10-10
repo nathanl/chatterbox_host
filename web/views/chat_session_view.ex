@@ -1,4 +1,4 @@
-defmodule ChatterboxHost.ChatSessionView do
+defmodule Consult.ChatSessionView do
   use ChatterboxHost.Web, :view
 
   def render(_something_dot_json, %{error: error}) do

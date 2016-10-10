@@ -1,5 +1,10 @@
-defmodule ChatterboxHost.ChatSessionController do
-  use ChatterboxHost.Web, :controller
+defmodule Consult.ChatSessionController do
+  use Phoenix.Controller
+  alias ChatterboxHost.Repo
+  import Ecto
+  import Ecto.Query
+  import ChatterboxHost.Router.Helpers
+  import ChatterboxHost.Gettext
   alias ChatterboxHost.{Endpoint,Repo}
   alias Consult.Conversation
 

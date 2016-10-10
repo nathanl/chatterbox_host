@@ -1,10 +1,10 @@
 
 <h1>CS Chat</h1>
 
-<%= link "All Conversations", to: "/conversations" %>
+<%= link "All Conversations", to: "/consult/conversations" %>
 
 <% # TODO use path helper %>
-<%= form_for @conn, "/set_tags/#{@id}", [as: :conversation_tags], fn f -> %>
+<%= form_for @conn, "/consult/set_tags/#{@id}", [as: :conversation_tags], fn f -> %>
   <%= label(f, :tag_ids, "Tags") %>
   <%= for {name, id} <- @possible_tags do %>
     <% checked = id in @current_tag_ids %>
