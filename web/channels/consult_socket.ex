@@ -1,6 +1,12 @@
 defmodule Consult.Socket do
   use Phoenix.Socket
 
+  defmacro __using__([]) do
+    quote do
+      socket "/consult_socket", Consult.Socket
+    end
+  end
+
   ## Channels
   channel "conversation:*", Consult.RoomChannel
   channel "cs_panel", Consult.CsPanelChannel

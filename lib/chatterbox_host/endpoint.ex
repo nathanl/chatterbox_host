@@ -2,7 +2,7 @@ defmodule ChatterboxHost.Endpoint do
   use Phoenix.Endpoint, otp_app: :chatterbox_host
 
   socket "/socket", ChatterboxHost.UserSocket
-  socket "/consult_socket", Consult.Socket
+  use Consult.Socket
 
   # Serve at "/" the static files from "priv/static" directory.
   #
