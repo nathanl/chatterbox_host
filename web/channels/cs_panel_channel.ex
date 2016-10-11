@@ -16,7 +16,7 @@ defmodule Consult.CsPanelChannel do
       Consult.ConversationView, "index.html",conversations: collection_for_cs_panel
     )
     html_string = :erlang.iolist_to_binary(html_iodata)
-    ChatterboxHost.Endpoint.broadcast(
+    Consult.Hooks.endpoint.broadcast(
       "cs_panel", "panel_update", %{main_contents: html_string}
     )
   end
@@ -26,7 +26,7 @@ defmodule Consult.CsPanelChannel do
       Conversation
       |> Scopes.id_and_message_info
 
-    conversations = [
+    [
       {"Unanswered", (query |> Scopes.not_ended |> Scopes.sequential |> Hooks.repo.all |> Filters.unanswered)},
       {"Ongoing", (query |> Scopes.not_ended |> Scopes.sequential |> Hooks.repo.all |> Filters.ongoing)},
       {"Ended", (query |> Scopes.ended |> Scopes.reverse_sequential |> Ecto.Query.limit(@closed_conversation_count) |> Hooks.repo.all)},

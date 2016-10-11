@@ -21,6 +21,10 @@ defmodule Consult.Hooks do
     ChatterboxHost.Repo
   end
 
+  defmacro endpoint do
+    ChatterboxHost.Endpoint
+  end
+
   # default implementation
   # def representative?(user) do
   #   true
@@ -29,6 +33,11 @@ defmodule Consult.Hooks do
   # default implementation
   # defmacro repo do
   #   MyApplicationName.Repo
+  # end
+
+  # default implementation
+  # defmacro endpoint do
+  #   MyApplicationName.Endpoint
   # end
 
   # default implementation
