@@ -82,7 +82,7 @@ if (document.getElementById("chatbox") !== null) {
             chat.closeChat()
           })
 
-          chat.socket = new Socket("/chatterbox_socket", {})
+          chat.socket = new Socket("/consult_socket", {})
           chat.socket.connect()
           chat.channel = chat.socket.channel(chatSessionInfo.channel_name, {conversation_id_token: chatSessionInfo.conversation_id_token})
           chat.channel.on("new_msg", payload => chat.addMessage(payload.timestamp, payload.from, payload.body))
@@ -216,7 +216,7 @@ if (document.getElementById("chatbox") !== null) {
 if (document.getElementById("chatterbox-dashboard") !== null) {
   let main = document.getElementById("main")
 
-  let socket = new Socket("/chatterbox_socket", {})
+  let socket = new Socket("/consult_socket", {})
   socket.connect()
   let channel = socket.channel("cs_panel", {})
 

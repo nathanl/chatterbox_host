@@ -1,8 +1,8 @@
-defmodule ChatterboxHost.ChatterboxSocket do
+defmodule Consult.Socket do
   use Phoenix.Socket
 
   ## Channels
-  channel "conversation:*", ChatterboxHost.RoomChannel
+  channel "conversation:*", Consult.RoomChannel
   channel "cs_panel", Consult.CsPanelChannel
 
   ## Transports

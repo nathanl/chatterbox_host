@@ -10,6 +10,8 @@ defmodule Consult.ConversationController do
   alias ChatterboxHost.{ConversationView}
   alias Conversation.{Scopes,Filters}
 
+  plug Consult.Authorized when action in [:index, :show, :set_tags]
+
   def index(conn, _assigns) do
     conversations = Consult.CsPanelChannel.collection_for_cs_panel
     render conn, conversations: conversations, layout: {Consult.ConversationView, "layout.html"}

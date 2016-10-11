@@ -27,7 +27,6 @@ defmodule ChatterboxHost.Router do
   scope "/consult", Consult do
     scope "/" do
       pipe_through :browser
-      # these need auth
       get "/conversations/:id", ConversationController, :show
       get "/conversations",    ConversationController, :index
       post "/set_tags/:id",    ConversationController, :set_tags

@@ -1,6 +1,6 @@
 defmodule Consult.Hooks do
   alias ChatterboxHost.{Repo,User}
-  use ChatterboxHost.Web, :controller
+  use ChatterboxHost.Web, :controller # TODO - use Plug.Conn?
 
   def user_for_session(conn) do
     conn = conn |> fetch_session
@@ -8,10 +8,19 @@ defmodule Consult.Hooks do
     do: Repo.get_by(User, id: user_id)
 
     case user do
-      %User{} -> %{id: user.id, name: user.name}
-      _       -> %{id: nil,     name: "Anonymous"}
+      %User{} -> %{id: user.id, name: user.name, cs_rep: user.cs_rep}
+      _       -> %{id: nil,     name: nil,       cs_rep: false}
     end
   end
+
+  def representative?(user) do
+    !!user.cs_rep
+  end
+
+  # default implementation
+  # def representative?(user) do
+  #   true
+  # end
 
   # default implementation
   # def user_for_session(conn) do

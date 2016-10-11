@@ -8,6 +8,8 @@ defmodule Consult.ChatSessionController do
   alias ChatterboxHost.{Endpoint,Repo}
   alias Consult.Conversation
 
+  plug Consult.Authorized when action in [:give_help]
+
   def give_help(conn, %{"conversation_id" => conversation_id}) do
     conversation = Repo.get_by(Conversation, id: conversation_id)
     render_data = case conversation do

@@ -1,4 +1,4 @@
-defmodule ChatterboxHost.RoomChannel do
+defmodule Consult.RoomChannel do
   use Phoenix.Channel
   alias Consult.{Conversation,Message}
   alias ChatterboxHost.Repo
