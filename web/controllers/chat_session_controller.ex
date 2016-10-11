@@ -22,7 +22,9 @@ defmodule Consult.ChatSessionController do
         }
     end
 
-    render conn, render_data
+    conn
+    |> put_resp_content_type("application/json")
+    |> send_resp(200, Poison.encode!(render_data))
   end
 
   def get_help(conn, %{"conversation_id_token" => conversation_id_token}) do
@@ -34,7 +36,11 @@ defmodule Consult.ChatSessionController do
 
     conversation_id_token = Phoenix.Token.sign(conn, "conversation_id", conversation_id)
 
-    render conn, user_id_token: user_id_token, user_name: user.name || "User", channel_name: "conversation:#{conversation_id}", conversation_id_token: conversation_id_token
+    render_data = %{user_id_token: user_id_token, user_name: user.name || "User", channel_name: "conversation:#{conversation_id}", conversation_id_token: conversation_id_token}
+
+    conn
+    |> put_resp_content_type("application/json")
+    |> send_resp(200, Poison.encode!(render_data))
   end
 
   def close_conversation(conn, %{"conversation_id_token" => conversation_id_token}) do
@@ -46,7 +52,11 @@ defmodule Consult.ChatSessionController do
       conversation
     end
 
-    render conn, ended_at: Ecto.DateTime.to_string(closed_conversation.ended_at)
+    render_data = %{ended_at: Ecto.DateTime.to_string(closed_conversation.ended_at)}
+
+    conn
+    |> put_resp_content_type("application/json")
+    |> send_resp(200, Poison.encode!(render_data))
   end
 
   defp new_or_existing_conversation_id(conn, convo_id_token) do
