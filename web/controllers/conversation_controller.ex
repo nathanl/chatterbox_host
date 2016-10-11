@@ -1,6 +1,7 @@
 defmodule Consult.ConversationController do
   use Phoenix.Controller
-  alias ChatterboxHost.Repo
+  alias Consult.Hooks
+  require Hooks
   import Ecto
   import Ecto.Query
   import ChatterboxHost.Router.Helpers
@@ -19,7 +20,7 @@ defmodule Consult.ConversationController do
 
   def show(conn, %{"id" => conversation_id}) do
     conversation = conversation_with_tags(conversation_id)
-    possible_tags = Repo.all(Tag) |> Enum.map(fn(tag) -> {tag.name, tag.id} end)
+    possible_tags = Hooks.repo.all(Tag) |> Enum.map(fn(tag) -> {tag.name, tag.id} end)
     render(conn, "show.html", %{
       id: conversation_id,
       layout: {Consult.ConversationView, "layout.html"},
@@ -53,7 +54,7 @@ defmodule Consult.ConversationController do
       # TODO make this less horrible and hacky!
       Ecto.Multi.insert(multi_acc, "insert_#{:rand.uniform(1_000)}", changeset)
     end)
-    Repo.transaction(multi)
+    Hooks.repo.transaction(multi)
 
     Consult.CsPanelChannel.send_updated_panel
 
@@ -63,7 +64,7 @@ defmodule Consult.ConversationController do
 
   defp conversation_with_tags(conversation_id) do
     query = from c in Conversation, where: c.id == ^conversation_id
-    ChatterboxHost.Repo.one!(Conversation.Scopes.with_conversation_tags(query))
+    Hooks.repo.one!(Conversation.Scopes.with_conversation_tags(query))
   end
 
   defp checked_values_from(checkbox_params) do

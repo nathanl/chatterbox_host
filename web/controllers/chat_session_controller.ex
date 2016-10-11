@@ -1,17 +1,18 @@
 defmodule Consult.ChatSessionController do
   use Phoenix.Controller
-  alias ChatterboxHost.Repo
+  alias Consult.Hooks
+  require Hooks
   import Ecto
   import Ecto.Query
   import ChatterboxHost.Router.Helpers
   import ChatterboxHost.Gettext
-  alias ChatterboxHost.{Endpoint,Repo}
+  alias ChatterboxHost.{Endpoint}
   alias Consult.Conversation
 
   plug Consult.Authorized when action in [:give_help]
 
   def give_help(conn, %{"conversation_id" => conversation_id}) do
-    conversation = Repo.get_by(Conversation, id: conversation_id)
+    conversation = Hooks.repo.get_by(Conversation, id: conversation_id)
     render_data = case conversation do
       nil -> %{error: "The requested conversation does not exist"}
       %Conversation{} ->
@@ -44,9 +45,9 @@ defmodule Consult.ChatSessionController do
   def close_conversation(conn, %{"conversation_id_token" => conversation_id_token}) do
     closed_conversation = with {:ok, conversation_id} <- Phoenix.Token.verify(
       Endpoint, "conversation_id", conversation_id_token
-    ), conversation <- Repo.get_by(Conversation, id: conversation_id),
+    ), conversation <- Hooks.repo.get_by(Conversation, id: conversation_id),
     %Conversation{} <- conversation do
-      {:ok, conversation} = Conversation.end_now(conversation) |> Repo.update
+      {:ok, conversation} = Conversation.end_now(conversation) |> Hooks.repo.update
       conversation
     end
 
@@ -57,12 +58,12 @@ defmodule Consult.ChatSessionController do
     with {:ok, convo_id} <- Phoenix.Token.verify(
       Endpoint, "conversation_id", convo_id_token
     ), 
-    %Conversation{} <- Repo.get_by(Conversation, id: convo_id) do
+    %Conversation{} <- Hooks.repo.get_by(Conversation, id: convo_id) do
       convo_id
     else
       _ ->
         new_conversation = Conversation.changeset(%Conversation{})
-        {:ok, new_conversation} = Repo.insert(new_conversation)
+        {:ok, new_conversation} = Hooks.repo.insert(new_conversation)
         new_conversation.id
     end 
   end

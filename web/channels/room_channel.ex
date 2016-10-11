@@ -1,7 +1,8 @@
 defmodule Consult.RoomChannel do
   use Phoenix.Channel
   alias Consult.{Conversation,Message}
-  alias ChatterboxHost.Repo
+  alias Consult.Hooks
+  require Hooks
   require Ecto.Query
 
   def join("conversation:" <> requested_id, %{"conversation_id_token" => conversation_id_token}, socket) do
@@ -20,7 +21,7 @@ defmodule Consult.RoomChannel do
   end
 
   def handle_info({:after_join, conversation_id}, socket) do
-    conversation = Repo.one!(
+    conversation = Hooks.repo.one!(
       Ecto.Query.from c in Conversation, where: c.id == ^conversation_id, preload: [messages: (^Message.reverse_sequential(Message))]
       )
     conversation.messages |> :lists.reverse |> Enum.each(fn (message) ->
@@ -35,7 +36,7 @@ defmodule Consult.RoomChannel do
   end
 
   def handle_in("new_msg", %{"body" => body, "user_name" => user_name, "user_id_token" => user_id_token}, socket) do
-    %Conversation{ended_at: nil} = Repo.get_by!(Conversation, id: socket.assigns[:conversation_id])
+    %Conversation{ended_at: nil} = Hooks.repo.get_by!(Conversation, id: socket.assigns[:conversation_id])
     message = record_message(socket.assigns[:conversation_id], body, user_id_token, user_name)
 
     broadcast!(socket, "new_msg", %{timestamp: Ecto.DateTime.to_string(message.inserted_at), from: user_name, body: body,  })
@@ -63,7 +64,7 @@ defmodule Consult.RoomChannel do
     new_message =
       %Message{content: content, conversation_id: conversation_id, sender_name: sender_name, sender_id: user_id}
       |> Message.changeset
-      {:ok, message} = Repo.insert(new_message)
+      {:ok, message} = Hooks.repo.insert(new_message)
       message
   end
 

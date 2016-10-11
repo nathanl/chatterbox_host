@@ -17,9 +17,18 @@ defmodule Consult.Hooks do
     !!user.cs_rep
   end
 
+  defmacro repo do
+    ChatterboxHost.Repo
+  end
+
   # default implementation
   # def representative?(user) do
   #   true
+  # end
+
+  # default implementation
+  # defmacro repo do
+  #   MyApplicationName.Repo
   # end
 
   # default implementation

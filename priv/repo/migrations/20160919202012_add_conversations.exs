@@ -1,4 +1,4 @@
-defmodule ChatterboxHost.Repo.Migrations.AddConversations do
+defmodule Consult.Migrations.AddConversations do
   use Ecto.Migration
 
   def change do

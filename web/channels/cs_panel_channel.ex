@@ -1,6 +1,7 @@
 defmodule Consult.CsPanelChannel do
   use Phoenix.Channel
-  alias ChatterboxHost.Repo
+  alias Consult.Hooks
+  require Hooks
   alias Consult.Conversation
   alias Conversation.{Scopes,Filters}
   require Ecto.Query
@@ -26,9 +27,9 @@ defmodule Consult.CsPanelChannel do
       |> Scopes.id_and_message_info
 
     conversations = [
-      {"Unanswered", (query |> Scopes.not_ended |> Scopes.sequential |> Repo.all |> Filters.unanswered)},
-      {"Ongoing", (query |> Scopes.not_ended |> Scopes.sequential |> Repo.all |> Filters.ongoing)},
-      {"Ended", (query |> Scopes.ended |> Scopes.reverse_sequential |> Ecto.Query.limit(@closed_conversation_count) |> Repo.all)},
+      {"Unanswered", (query |> Scopes.not_ended |> Scopes.sequential |> Hooks.repo.all |> Filters.unanswered)},
+      {"Ongoing", (query |> Scopes.not_ended |> Scopes.sequential |> Hooks.repo.all |> Filters.ongoing)},
+      {"Ended", (query |> Scopes.ended |> Scopes.reverse_sequential |> Ecto.Query.limit(@closed_conversation_count) |> Hooks.repo.all)},
     ]
   end
 

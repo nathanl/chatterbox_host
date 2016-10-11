@@ -9,7 +9,8 @@
 #
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
-alias ChatterboxHost.{Repo,User,Tag}
+alias ChatterboxHost.{Repo,User}
+alias Consult.Tag
 
 [
   %{name: "Normal McBasic", email: "normal@example.com", password: "iliketoast"},
