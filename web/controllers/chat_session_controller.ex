@@ -2,11 +2,6 @@ defmodule Consult.ChatSessionController do
   use Phoenix.Controller
   alias Consult.Hooks
   require Hooks
-  import Ecto
-  import Ecto.Query
-  import ChatterboxHost.Router.Helpers
-  import ChatterboxHost.Gettext
-  alias ChatterboxHost.{Endpoint}
   alias Consult.Conversation
 
   plug Consult.Authorized when action in [:give_help]
@@ -17,8 +12,8 @@ defmodule Consult.ChatSessionController do
       nil -> %{error: "The requested conversation does not exist"}
       %Conversation{} ->
         cs_rep = Consult.Hooks.user_for_session(conn)
-        user_id_token = user_id_token(cs_rep)
-        conversation_id_token = Phoenix.Token.sign(Endpoint, "conversation_id", conversation_id)
+        user_id_token = user_id_token(conn, cs_rep)
+        conversation_id_token = Phoenix.Token.sign(conn, "conversation_id", conversation_id)
         %{
           user_id_token: user_id_token,
           user_name: cs_rep.name || "Representative",
@@ -33,18 +28,18 @@ defmodule Consult.ChatSessionController do
   def get_help(conn, %{"conversation_id_token" => conversation_id_token}) do
     user = Consult.Hooks.user_for_session(conn)
     
-    user_id_token = user_id_token(user)
+    user_id_token = user_id_token(conn, user)
 
-    conversation_id = new_or_existing_conversation_id(conversation_id_token)
+    conversation_id = new_or_existing_conversation_id(conn, conversation_id_token)
 
-    conversation_id_token = Phoenix.Token.sign(Endpoint, "conversation_id", conversation_id)
+    conversation_id_token = Phoenix.Token.sign(conn, "conversation_id", conversation_id)
 
     render conn, user_id_token: user_id_token, user_name: user.name || "User", channel_name: "conversation:#{conversation_id}", conversation_id_token: conversation_id_token
   end
 
   def close_conversation(conn, %{"conversation_id_token" => conversation_id_token}) do
     closed_conversation = with {:ok, conversation_id} <- Phoenix.Token.verify(
-      Endpoint, "conversation_id", conversation_id_token
+      conn, "conversation_id", conversation_id_token
     ), conversation <- Hooks.repo.get_by(Conversation, id: conversation_id),
     %Conversation{} <- conversation do
       {:ok, conversation} = Conversation.end_now(conversation) |> Hooks.repo.update
@@ -54,9 +49,9 @@ defmodule Consult.ChatSessionController do
     render conn, ended_at: Ecto.DateTime.to_string(closed_conversation.ended_at)
   end
 
-  defp new_or_existing_conversation_id(convo_id_token) do
+  defp new_or_existing_conversation_id(conn, convo_id_token) do
     with {:ok, convo_id} <- Phoenix.Token.verify(
-      Endpoint, "conversation_id", convo_id_token
+      conn, "conversation_id", convo_id_token
     ), 
     %Conversation{} <- Hooks.repo.get_by(Conversation, id: convo_id) do
       convo_id
@@ -68,10 +63,10 @@ defmodule Consult.ChatSessionController do
     end 
   end
 
-  defp user_id_token(user) do
+  defp user_id_token(conn, user) do
     case user.id do
       nil -> nil
-      _id  -> Phoenix.Token.sign(Endpoint, "user_id", user.id)
+      _id  -> Phoenix.Token.sign(conn, "user_id", user.id)
     end
   end
 end

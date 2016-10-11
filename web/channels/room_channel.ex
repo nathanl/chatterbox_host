@@ -7,7 +7,7 @@ defmodule Consult.RoomChannel do
 
   def join("conversation:" <> requested_id, %{"conversation_id_token" => conversation_id_token}, socket) do
     {:ok, authorized_id} = Phoenix.Token.verify(
-      ChatterboxHost.Endpoint, "conversation_id", conversation_id_token
+      socket, "conversation_id", conversation_id_token
     )
     [requested_id, authorized_id] = Enum.map([requested_id, authorized_id], &ensure_integer/1)
     
@@ -37,7 +37,7 @@ defmodule Consult.RoomChannel do
 
   def handle_in("new_msg", %{"body" => body, "user_name" => user_name, "user_id_token" => user_id_token}, socket) do
     %Conversation{ended_at: nil} = Hooks.repo.get_by!(Conversation, id: socket.assigns[:conversation_id])
-    message = record_message(socket.assigns[:conversation_id], body, user_id_token, user_name)
+    message = record_message(socket, socket.assigns[:conversation_id], body, user_id_token, user_name)
 
     broadcast!(socket, "new_msg", %{timestamp: Ecto.DateTime.to_string(message.inserted_at), from: user_name, body: body,  })
     Consult.CsPanelChannel.send_updated_panel
@@ -47,7 +47,7 @@ defmodule Consult.RoomChannel do
   def handle_in("conversation_closed", %{"ended_by" => ended_by, "user_id_token" => user_id_token, "ended_at" => ended_at}, socket) do
     body = "[Conversation ended by #{ended_by} at #{ended_at}]"
     sender_name = "System"
-    message = record_message(socket.assigns[:conversation_id], body, user_id_token, sender_name)
+    message = record_message(socket, socket.assigns[:conversation_id], body, user_id_token, sender_name)
 
     broadcast!(socket, "new_msg", %{timestamp: Ecto.DateTime.to_string(message.inserted_at), from: sender_name, body: body})
     broadcast!(socket, "conversation_closed", %{})
@@ -55,8 +55,8 @@ defmodule Consult.RoomChannel do
     {:noreply, socket}
   end
 
-  defp record_message(conversation_id, content, user_id_token, sender_name) do
-    user_id = case Phoenix.Token.verify(ChatterboxHost.Endpoint, "user_id", user_id_token) do
+  defp record_message(socket, conversation_id, content, user_id_token, sender_name) do
+    user_id = case Phoenix.Token.verify(socket, "user_id", user_id_token) do
       {:ok, verified_id} -> verified_id
       _ -> nil
     end

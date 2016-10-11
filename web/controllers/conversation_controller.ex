@@ -2,14 +2,9 @@ defmodule Consult.ConversationController do
   use Phoenix.Controller
   alias Consult.Hooks
   require Hooks
-  import Ecto
   import Ecto.Query
-  import ChatterboxHost.Router.Helpers
-  import ChatterboxHost.Gettext
 
   alias Consult.{Conversation,Tag,ConversationTag}
-  alias ChatterboxHost.{ConversationView}
-  alias Conversation.{Scopes,Filters}
 
   plug Consult.Authorized when action in [:index, :show, :set_tags]
 
@@ -59,6 +54,7 @@ defmodule Consult.ConversationController do
     Consult.CsPanelChannel.send_updated_panel
 
     # TODO ask about and maybe do a PR on Phoenix to add this?
+    # see https://github.com/phoenixframework/phoenix/pull/1402
     redirect conn, to: local_referer(conn)
   end
 
